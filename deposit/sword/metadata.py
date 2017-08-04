@@ -49,7 +49,7 @@ class MetadataFormatter(object):
         return None
 
     def toString(self, paper, filename, form=None, pretty=False,
-                xml_declaration=True):
+                 xml_declaration=True):
         """
         The metadata as a string
         """
@@ -84,7 +84,7 @@ class DCFormatter(MetadataFormatter):
         xmlns = '{%s}' % xmlns_uri
         dcterms = '{%s}' % dcterms_uri
         nsmap = {None: xmlns_uri, 'dcterms': dcterms_uri}
-        entry = etree.Element(xmlns+'entry', nsmap=nsmap)
+        entry = etree.Element(xmlns + 'entry', nsmap=nsmap)
 
         addChild(entry, 'title', paper.title)
 
@@ -94,16 +94,16 @@ class DCFormatter(MetadataFormatter):
 
         # Here comes the actual metadata
 
-        addChild(entry, dcterms+'title', paper.title)
+        addChild(entry, dcterms + 'title', paper.title)
         if paper.abstract:
-            addChild(entry, dcterms+'abstract', paper.abstract)
-        addChild(entry, dcterms+'type', paper.doctype)
+            addChild(entry, dcterms + 'abstract', paper.abstract)
+        addChild(entry, dcterms + 'type', paper.doctype)
 
         for a in paper.authors:
-            addChild(entry, dcterms+'contributor', unicode(a))
+            addChild(entry, dcterms + 'contributor', unicode(a))
 
         for p in paper.oairecords:
             if p.doi:
-                addChild(entry, dcterms+'identifier', p.doi)
+                addChild(entry, dcterms + 'identifier', p.doi)
 
         return entry

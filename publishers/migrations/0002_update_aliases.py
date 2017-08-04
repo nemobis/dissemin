@@ -3,11 +3,13 @@ from __future__ import unicode_literals
 
 from django.db import migrations
 
+
 def backwards(apps, schema_editor):
     """
     Migration nullified after squash of papers
     """
     pass
+
 
 class Migration(migrations.Migration):
 

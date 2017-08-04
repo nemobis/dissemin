@@ -29,12 +29,14 @@ from papers.baremodels import BareOaiRecord
 from deposit.forms import BaseMetadataForm
 from deposit.models import DEPOSIT_STATUS_CHOICES
 
+
 class DepositError(Exception):
     """
     The exception to raise when something wrong happens
     during the deposition process
     """
     pass
+
 
 class DepositResult(object):
     """
@@ -51,12 +53,13 @@ class DepositResult(object):
         self.splash_url = splash_url
         self.pdf_url = pdf_url
         self.logs = logs
-        if status not in [x for x,y in DEPOSIT_STATUS_CHOICES]:
-            raise ValueError('invalid status '+unicode(status))
+        if status not in [x for x, y in DEPOSIT_STATUS_CHOICES]:
+            raise ValueError('invalid status ' + unicode(status))
         self.status = status
         self.message = message
         self.oairecord = None
         self.additional_info = []
+
 
 class RepositoryProtocol(object):
     """
@@ -108,7 +111,7 @@ class RepositoryProtocol(object):
         """
         Returns the form's initial values.
         """
-        return {'paper_id':self.paper.id}
+        return {'paper_id': self.paper.id}
 
     def get_form(self):
         """
@@ -164,12 +167,12 @@ class RepositoryProtocol(object):
             first_name = getattr(self.user, 'first_name', None)
             last_name = getattr(self.user, 'last_name', None)
             if first_name and last_name:
-                name = '%s %s' % (first_name,last_name)
+                name = '%s %s' % (first_name, last_name)
             notification_payload = {
-                    'name':unicode(name),
-                    'repo':self.repository.name,
-                    'paperurl':self.paper.url,
-                }
+                'name': unicode(name),
+                'repo': self.repository.name,
+                'paperurl': self.paper.url,
+            }
 
             result = self.submit_deposit(*args, **kwargs)
             result.logs = self._logs
@@ -177,28 +180,28 @@ class RepositoryProtocol(object):
             # Create the corresponding OAI record
             if result.splash_url:
                 rec = BareOaiRecord(
-                        source=self.repository.oaisource,
-                        identifier=('deposition:%d:%s' %
-                                    (self.repository.id, unicode(result.identifier))),
-                        splash_url=result.splash_url,
-                        pdf_url=result.pdf_url)
+                    source=self.repository.oaisource,
+                    identifier=('deposition:%d:%s' %
+                                (self.repository.id, unicode(result.identifier))),
+                    splash_url=result.splash_url,
+                    pdf_url=result.pdf_url)
                 result.oairecord = self.paper.add_oairecord(rec)
 
             settings.DEPOSIT_NOTIFICATION_CALLBACK(notification_payload)
 
             return result
         except DepositError as e:
-            self.log('Message: '+e.args[0])
-            notification_payload['paperurl'] += ' '+e.args[0]
+            self.log('Message: ' + e.args[0])
+            notification_payload['paperurl'] += ' ' + e.args[0]
             settings.DEPOSIT_NOTIFICATION_CALLBACK(notification_payload)
             return DepositResult(logs=self._logs, status='failed', message=e.args[0])
         except Exception as e:
             self.log("Caught exception:")
-            self.log(str(type(e))+': '+str(e)+'')
+            self.log(str(type(e)) + ': ' + str(e) + '')
             self.log(traceback.format_exc())
             return DepositResult(logs=self._logs, status='failed', message=__('Failed to connect to the repository. Please try again later.'))
 
-    ### Logging utilities
+    # Logging utilities
     # This log will be saved in a DepositRecord later on, so make sure
     # you use this logging so that you can inspect what went wrong
     # with a particular deposit later on.
@@ -207,7 +210,7 @@ class RepositoryProtocol(object):
         """
         Logs a line in the protocol log.
         """
-        self._logs += line+'\n'
+        self._logs += line + '\n'
 
     def log_request(self, r, expected_status_code, error_msg):
         """
@@ -222,7 +225,7 @@ class RepositoryProtocol(object):
             self.log('')
             raise DepositError(error_msg)
 
-    ### Repository preferences
+    # Repository preferences
     # This enables you to let users define preferences about their
     # deposits.
 
@@ -237,8 +240,8 @@ class RepositoryProtocol(object):
             return
         MyPreferences = self.preferences_model
         preferences, _ = MyPreferences.objects.get_or_create(
-                            user=user,
-                            repository=self.repository)
+            user=user,
+            repository=self.repository)
         return preferences
 
     def get_preferences_form(self, user, *args, **kwargs):
@@ -252,4 +255,3 @@ class RepositoryProtocol(object):
         prefs = self.get_preferences(user)
         kwargs['instance'] = prefs
         return self.preferences_form_class(*args, **kwargs)
-

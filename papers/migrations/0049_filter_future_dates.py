@@ -19,7 +19,7 @@ def remove_from_index(paper):
     for using in using_backends:
         try:
             index = haystack.connections[using].get_unified_index(
-                                    ).get_index(Paper)
+            ).get_index(Paper)
             index.remove_object(paper, using=using)
         except haystack.exceptions.NotHandled:
             pass

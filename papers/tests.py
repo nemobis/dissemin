@@ -35,6 +35,7 @@ from papers.models import Paper
 from papers.models import Researcher
 from papers.models import Institution
 
+
 class InstitutionTest(django.test.TestCase):
     def test_valid(self):
         institution = {
@@ -89,40 +90,39 @@ class ResearcherTest(django.test.TestCase):
         self.assertEqual(r, None)
         # this ORCID has no public name in the sandbox:
         r = Researcher.get_or_create_by_orcid('0000-0002-6091-2701',
-            instance='sandbox.orcid.org')
+                                              instance='sandbox.orcid.org')
         self.assertEqual(r, None)
 
     def test_institution(self):
         r = Researcher.get_or_create_by_orcid('0000-0002-0022-2290',
-            instance='sandbox.orcid.org')
+                                              instance='sandbox.orcid.org')
         self.assertEqual(r.institution.name,
-                'Ecole Normale Superieure')
+                         'Ecole Normale Superieure')
 
     def test_institution_match(self):
         # first, load a profile from someone with
         # a disambiguated institution (from the sandbox)
         # http://sandbox.orcid.org/0000-0001-7174-97
         r = Researcher.get_or_create_by_orcid('0000-0001-7174-9738',
-            instance='sandbox.orcid.org')
+                                              instance='sandbox.orcid.org')
         # then, load someone else, with the same institution, but not
         # disambiguated, and without accents
         # http://sandbox.orcid.org//0000-0001-6068-024
         r2 = Researcher.get_or_create_by_orcid('0000-0001-6068-0245',
-            instance='sandbox.orcid.org')
+                                               instance='sandbox.orcid.org')
         self.assertEqual(r.institution, r2.institution)
 
     def test_refresh(self):
         r = Researcher.get_or_create_by_orcid('0000-0002-0022-2290',
-                    instance='sandbox.orcid.org')
+                                              instance='sandbox.orcid.org')
         self.assertEqual(r.institution.name, 'Ecole Normale Superieure')
         r.institution = None
-        r.name = Name.lookup_name(('John','Doe'))
+        r.name = Name.lookup_name(('John', 'Doe'))
         r.save()
         r = Researcher.get_or_create_by_orcid('0000-0002-0022-2290',
-                instance='sandbox.orcid.org',
-                update=True)
+                                              instance='sandbox.orcid.org',
+                                              update=True)
         self.assertEqual(r.institution.name, 'Ecole Normale Superieure')
-
 
     def test_name_conflict(self):
         # Both are called "John Doe"
@@ -143,6 +143,7 @@ for Pressure, Temperature & Electrical parameters. Many of our
 Temperature & Pressure Calibrator Models are Certified by DNV. Nagman
 also""", "Nagman")),
             None)
+
 
 class OaiRecordTest(django.test.TestCase):
 
@@ -182,15 +183,19 @@ class PaperTest(django.test.TestCase):
 
     def test_create_by_identifier(self):
         # Paper has no date
-        p = Paper.create_by_oai_id('ftciteseerx:oai:CiteSeerX.psu:10.1.1.487.869')
+        p = Paper.create_by_oai_id(
+            'ftciteseerx:oai:CiteSeerX.psu:10.1.1.487.869')
         self.assertEqual(p, None)
         # Valid paper
-        p = Paper.create_by_oai_id('ftpubmed:oai:pubmedcentral.nih.gov:4131942')
-        self.assertEqual(p.pdf_url, 'http://www.ncbi.nlm.nih.gov/pubmed/24806729')
+        p = Paper.create_by_oai_id(
+            'ftpubmed:oai:pubmedcentral.nih.gov:4131942')
+        self.assertEqual(
+            p.pdf_url, 'http://www.ncbi.nlm.nih.gov/pubmed/24806729')
 
     def test_create_by_hal_id(self):
         p = Paper.create_by_hal_id('hal-00830421')
-        self.assertEqual(p.oairecords[0].splash_url, 'http://hal.archives-ouvertes.fr/hal-00830421')
+        self.assertEqual(
+            p.oairecords[0].splash_url, 'http://hal.archives-ouvertes.fr/hal-00830421')
 
     def test_publication_pdf_url(self):
         # This paper is gold OA
@@ -198,7 +203,7 @@ class PaperTest(django.test.TestCase):
         p = Paper.from_bare(p)
         # so the pdf_url of the publication should be set
         self.assertEqual(p.publications[0].pdf_url.lower(
-            ), 'https://doi.org/10.1007/BF02702259'.lower())
+        ), 'https://doi.org/10.1007/BF02702259'.lower())
 
     def test_create_no_authors(self):
         p = Paper.create_by_doi('10.1021/cen-v043n050.p033')
@@ -216,8 +221,8 @@ class PaperTest(django.test.TestCase):
         names = [BareName.create_bare(f, l) for (f, l) in
                  [('M. H.', 'Jones'), ('R. H.', 'Haase'), ('S. F.', 'Hulbert')]]
         p2 = Paper.get_or_create(
-                'A Survey of the Literature on Technical Positions', names,
-                date(year=2011, month=01, day=01))
+            'A Survey of the Literature on Technical Positions', names,
+            date(year=2011, month=01, day=01))
         # The two are not merged because of the difference in the title
         self.assertNotEqual(p, p2)
         # Fix the title of the second one
@@ -280,5 +285,3 @@ class PaperTest(django.test.TestCase):
         # But if we ask for a flexible check, as her name matches
         # one of the author names of the paper, she is recognized.
         self.assertTrue(p1.is_owned_by(other_user, flexible=True))
-
-

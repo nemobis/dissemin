@@ -241,12 +241,14 @@ def changePublisherStatus(request):
     except ObjectDoesNotExist:
         return HttpResponseNotFound('NOK', content_type='text/plain')
 
+
 class InstitutionsMapView(GeoJSONLayerView):
     model = Institution
     geometry_field = 'coords'
 
     def get_queryset(self):
         return Institution.objects.filter(coords__isnull=False)
+
 
 urlpatterns = [
     #    url(r'^annotate-paper-(?P<pk>\d+)-(?P<status>\d+)$', annotatePaper, name='ajax-annotatePaper'),

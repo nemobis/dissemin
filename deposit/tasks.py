@@ -25,15 +25,14 @@ from celery import shared_task
 from backend.utils import run_only_once
 from deposit.models import DepositRecord
 
+
 @shared_task(name='refresh_deposit_statuses')
 @run_only_once('refresh_deposit_statuses')
 def refresh_deposit_statuses():
     # only run it on DepositRecords that have initially succeeded:
     # ignore 'failed' and 'faked' statuses
-    for d in DepositRecord.objects.filter(status__in=
-            ['pending','published','refused','deleted']).select_related('repository'):
+    for d in DepositRecord.objects.filter(status__in=['pending', 'published', 'refused', 'deleted']).select_related('repository'):
         print d.status
         protocol = d.repository.get_implementation()
         if protocol:
             protocol.refresh_deposit_status(d)
-

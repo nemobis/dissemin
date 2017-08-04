@@ -51,11 +51,13 @@ from papers.utils import valid_publication_date
 # Set exposed by proaixy to indicate the metadata source
 PROXY_SOURCE_PREFIX = "proaixy:source:"
 
+
 def get_proaixy_instance():
     proaixy = OaiPaperSource(endpoint='http://doai.io/oai')
     proaixy.add_translator(BASEDCTranslator())
     proaixy.add_translator(CiteprocTranslator())
     return proaixy
+
 
 class OaiTranslator(object):
     """
@@ -92,6 +94,7 @@ class CiteprocReader(MetadataReader):
         payload = json.loads(jsontxt)
 
         return common.Metadata(element, payload)
+
 
 citeproc_reader = CiteprocReader()
 
@@ -175,7 +178,7 @@ class OAIDCTranslator(object):
             pdf_url = urls.get('pdf')
             splash_url = urls.get('splash')
         except KeyError:
-            print "Warning, invalid extractor for source "+source_identifier
+            print "Warning, invalid extractor for source " + source_identifier
         return splash_url, pdf_url
 
     def get_source(self, header, metadata):
@@ -208,7 +211,7 @@ class OAIDCTranslator(object):
 
         # - title
         if not metadata.get('title') or not authors or not pubdate:
-            #print "no title, authors, or pubdate"
+            # print "no title, authors, or pubdate"
             return
 
         # Find the OAI source
@@ -224,7 +227,7 @@ class OAIDCTranslator(object):
             self.add_oai_record(header, metadata, source, paper)
             return paper
         except ValueError as e:
-            print "Warning, OAI record "+header.identifier()+" skipped:\n"+unicode(e)
+            print "Warning, OAI record " + header.identifier() + " skipped:\n" + unicode(e)
             paper.update_availability()
 
     def add_oai_record(self, header, metadata, source, paper):
@@ -247,7 +250,7 @@ class OAIDCTranslator(object):
         keywords = ' | '.join(metadata['subject'])
         contributors = ' '.join(metadata['contributor'])[:4096]
 
-        typenorms = ['typenorm:'+tn for tn in metadata.get('typenorm', [])]
+        typenorms = ['typenorm:' + tn for tn in metadata.get('typenorm', [])]
         pubtype_list = metadata.get('type', []) + typenorms
         pubtype = None
         for raw_pubtype in pubtype_list:
@@ -260,20 +263,20 @@ class OAIDCTranslator(object):
 
         # Find the DOI, if any
         doi = None
-        for url in metadata['identifier']+metadata['relation']+metadata['source']:
+        for url in metadata['identifier'] + metadata['relation'] + metadata['source']:
             if not doi:
                 doi = to_doi(url)
 
         record = BareOaiRecord(
-                source=source,
-                identifier=identifier,
-                description=curdesc,
-                keywords=keywords,
-                contributors=contributors,
-                pubtype=pubtype,
-                pdf_url=pdf_url,
-                splash_url=splash_url,
-                doi=doi)
+            source=source,
+            identifier=identifier,
+            description=curdesc,
+            keywords=keywords,
+            contributors=contributors,
+            pubtype=pubtype,
+            pdf_url=pdf_url,
+            splash_url=splash_url,
+            doi=doi)
         paper.add_oairecord(record)
 
 
@@ -286,16 +289,19 @@ class BASEDCTranslator(OAIDCTranslator):
     def format(self):
         return 'base_dc'
 
+
 class CustomSourceOAIDCTranslator(OAIDCTranslator):
     """
     Just like OAIDCTranslator, but with a custom source
     (not assuming that the endpoint is proaixy)
     """
+
     def __init__(self, source):
         self.source = source
 
     def get_source(self, header, record):
         return self.source
+
 
 class OaiPaperSource(PaperSource):  # TODO: this should not inherit from PaperSource
     """
@@ -360,11 +366,11 @@ class OaiPaperSource(PaperSource):  # TODO: this should not inherit from PaperSo
         :param metadataPrefix: restrict the ingest for this metadata
                           format
         """
-	args = {'metadataPrefix':metadataPrefix}
-	if from_date:
-	    args['from_'] = from_date
-	if resumptionToken:
-	    args['resumptionToken'] = resumptionToken
+        args = {'metadataPrefix': metadataPrefix}
+        if from_date:
+            args['from_'] = from_date
+        if resumptionToken:
+            args['resumptionToken'] = resumptionToken
         records = self.client.listRecords(**args)
         self.process_records(records)
 
@@ -379,8 +385,8 @@ class OaiPaperSource(PaperSource):  # TODO: this should not inherit from PaperSo
         :returns: a Paper or None
         """
         record = self.client.getRecord(
-                    metadataPrefix=metadataPrefix,
-                    identifier=identifier)
+            metadataPrefix=metadataPrefix,
+            identifier=identifier)
         return self.process_record(record[0], record[1]._map)
 
     # Record search utilities

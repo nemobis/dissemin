@@ -104,7 +104,7 @@ class PaperForm(SearchForm):
         initial='',
         required=False)
     availability = forms.ChoiceField(
-        choices=[('', _('Any'))]+PDF_STATUS_CHOICES,
+        choices=[('', _('Any'))] + PDF_STATUS_CHOICES,
         required=False)
     oa_status = forms.MultipleChoiceField(
         choices=OA_STATUS_CHOICES_WITHOUT_HELPTEXT,
@@ -184,9 +184,9 @@ class PaperForm(SearchForm):
     def no_query_found(self):
         return self.searchqueryset.all()
 
+
 class FrontPageSearchForm(PaperForm):
     def __init__(self, *args, **kwargs):
         super(FrontPageSearchForm, self).__init__(*args, **kwargs)
         self.fields['authors'].widget.attrs.update({'placeholder':
-        _('Try any author name')})
-
+                                                    _('Try any author name')})

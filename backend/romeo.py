@@ -57,7 +57,7 @@ def perform_romeo_query(search_terms):
     search_terms = search_terms.copy()
     if ROMEO_API_KEY:
         search_terms['ak'] = ROMEO_API_KEY
-    base_url = 'http://'+ROMEO_API_DOMAIN+'/romeo/api29.php'
+    base_url = 'http://' + ROMEO_API_DOMAIN + '/romeo/api29.php'
 
     # Perform the query
     try:
@@ -65,9 +65,9 @@ def perform_romeo_query(search_terms):
             base_url, data=search_terms).encode('utf-8')
     except requests.exceptions.RequestException as e:
         raise MetadataSourceException('Error while querying RoMEO.\n' +
-                                      'URL was: '+base_url+'\n' +
-                                      'Parameters were: '+str(search_terms)+'\n' +
-                                      'Error is: '+str(e))
+                                      'URL was: ' + base_url + '\n' +
+                                      'Parameters were: ' + str(search_terms) + '\n' +
+                                      'Error is: ' + str(e))
 
     # Parse it
     try:
@@ -75,9 +75,9 @@ def perform_romeo_query(search_terms):
         root = ET.parse(BytesIO(response), parser)
     except ET.ParseError as e:
         raise MetadataSourceException('RoMEO returned an invalid XML response.\n' +
-                                      'URL was: '+base_url+'\n' +
-                                      'Parameters were: '+str(search_terms)+'\n' +
-                                      'Error is: '+str(e))
+                                      'URL was: ' + base_url + '\n' +
+                                      'Parameters were: ' + str(search_terms) + '\n' +
+                                      'Error is: ' + str(e))
 
     return root
 
@@ -113,8 +113,8 @@ def fetch_journal(search_terms, matching_mode='exact'):
 
     # Check the arguments
     if not all(key in allowed_fields for key in terms):
-        raise ValueError('The search terms have to belong to '+str(allowed_fields) +
-                         'but the dictionary I got is '+str(terms))
+        raise ValueError('The search terms have to belong to ' + str(allowed_fields) +
+                         'but the dictionary I got is ' + str(terms))
 
     # Remove diacritics (because it has to be sent in ASCII to ROMEO)
     for key in terms:
@@ -138,7 +138,7 @@ def fetch_journal(search_terms, matching_mode='exact'):
     if not journals:
         return None
     elif len(journals) > 1:
-        print("Warning, "+str(len(journals))+" journals match the RoMEO request, " +
+        print("Warning, " + str(len(journals)) + " journals match the RoMEO request, " +
               "defaulting to the first one")
         # TODO different behaviour: get the ISSN and try again.
     journal = journals[0]
@@ -146,9 +146,9 @@ def fetch_journal(search_terms, matching_mode='exact'):
     names = list(journal.findall('./jtitle'))
     if not names:
         raise MetadataSourceException('RoMEO returned a journal without title.\n' +
-                                      'Terms were: '+unicode(terms))
+                                      'Terms were: ' + unicode(terms))
     if len(names) > 1:
-        print("Warning, "+str(len(names))+" names provided for one journal, " +
+        print("Warning, " + str(len(names)) + " names provided for one journal, " +
               "defaulting to the first one")
     name = kill_html(names[0].text)
 
@@ -202,7 +202,7 @@ def fetch_publisher(publisher_name):
         # results). Then we need to make sure the first one appears a lot more often than
         # the first
         if (aliases[0].count > PUBLISHER_NAME_ASSOCIATION_THRESHOLD and
-                aliases[0].count > PUBLISHER_NAME_ASSOCIATION_FACTOR*aliases[1].count):
+                aliases[0].count > PUBLISHER_NAME_ASSOCIATION_FACTOR * aliases[1].count):
             AliasPublisher.increment(publisher_name, aliases[0].publisher)
             return aliases[0].publisher
 

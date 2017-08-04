@@ -15,7 +15,8 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='depositrecord',
             name='status',
-            field=models.CharField(choices=[('pending', 'Pending publication'), ('published', 'Published'), ('refused', 'Refused by the repository'), ('deleted', 'Deleted')], default='published', max_length=64),
+            field=models.CharField(choices=[('pending', 'Pending publication'), ('published', 'Published'), (
+                'refused', 'Refused by the repository'), ('deleted', 'Deleted')], default='published', max_length=64),
             preserve_default=False,
         ),
     ]

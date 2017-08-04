@@ -38,11 +38,11 @@ class run_only_once(object):
     def __init__(self, base_id, **kwargs):
         self.base_id = base_id
         self.keys = kwargs.get('keys', [])
-        self.timeout = int(kwargs.get('timeout', 60*10))
+        self.timeout = int(kwargs.get('timeout', 60 * 10))
 
     def __call__(self, f):
         def inner(*args, **kwargs):
-            lock_id = self.base_id+'-' + \
+            lock_id = self.base_id + '-' + \
                 ('-'.join([str(kwargs.get(key, 'none')) for key in self.keys]))
             lock = redis_client.lock(lock_id, timeout=self.timeout)
             have_lock = False
@@ -76,21 +76,21 @@ def urlopen_retry(url, **kwargs):  # data, timeout, retries, delay, backoff):
         return r.text
     except requests.exceptions.Timeout as e:
         if retries <= 0:
-            raise MetadataSourceException('Timeout: '+str(e))
+            raise MetadataSourceException('Timeout: ' + str(e))
     except requests.exceptions.ConnectionError as e:
         if retries <= 0:
-            raise MetadataSourceException('Connection error: '+str(e))
+            raise MetadataSourceException('Connection error: ' + str(e))
     except requests.exceptions.RequestException as e:
-        raise MetadataSourceException('Request error: '+str(e))
+        raise MetadataSourceException('Request error: ' + str(e))
 
-    print "Retrying in "+str(delay)+" seconds..."
-    print "URL: "+url
+    print "Retrying in " + str(delay) + " seconds..."
+    print "URL: " + url
     sleep(delay)
     return urlopen_retry(url,
                          data=data,
                          timeout=timeout,
-                         retries=retries-1,
-                         delay=delay*backoff,
+                         retries=retries - 1,
+                         delay=delay * backoff,
                          backoff=backoff)
 
 

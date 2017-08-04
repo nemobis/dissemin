@@ -73,7 +73,7 @@ def fetch_on_orcid_login(sender, **kwargs):
         user = account.user
     r = Researcher.get_or_create_by_orcid(orcid, profile, user)
 
-    if not r: # invalid ORCID profile (e.g. no name provided)
+    if not r:  # invalid ORCID profile (e.g. no name provided)
         return
 
     if r.user_id is None and user is not None:
@@ -83,6 +83,7 @@ def fetch_on_orcid_login(sender, **kwargs):
         r.init_from_orcid()
     else:
         r.fetch_everything_if_outdated()
+
 
 post_social_login.connect(fetch_on_orcid_login)
 
@@ -99,7 +100,7 @@ def index(request):
         'combined_status':
             [{'choice_value': v, 'choice_label': l}
              for v, l in COMBINED_STATUS_CHOICES]
-        }
+    }
     return render(request, 'papers/index.html', context)
 
 
@@ -132,7 +133,8 @@ class PaperSearchView(SearchView):
             '%d paper found',
             '%d papers found',
             nb_results) % nb_results
-        context['search_stats'] = BareAccessStatistics.from_search_queryset(self.queryset)
+        context['search_stats'] = BareAccessStatistics.from_search_queryset(
+            self.queryset)
         context['on_statuses'] = json.dumps(context['form'].on_statuses())
         context['ajax_url'] = self.request.path
 
@@ -155,7 +157,7 @@ class PaperSearchView(SearchView):
         args = super(PaperSearchView, self).get_form_kwargs()
 
         if 'data' not in args:
-            args['data'] = {self.search_field:''}
+            args['data'] = {self.search_field: ''}
         return args
 
     def render_to_response(self, context, **kwargs):
@@ -231,12 +233,14 @@ class ResearcherView(PaperSearchView):
         researcher = self.researcher
         # researcher corresponding to the currently logged in user
         try:
-            context['user_researcher'] = Researcher.objects.get(user=self.request.user)
+            context['user_researcher'] = Researcher.objects.get(
+                user=self.request.user)
         except (Researcher.DoesNotExist, TypeError):
-            pass # no logged in user
+            pass  # no logged in user
         context['researcher'] = researcher
         context['researcher_id'] = researcher.id
-        context['search_description'] += _(' authored by ')+unicode(researcher)
+        context['search_description'] += _(' authored by ') + \
+            unicode(researcher)
         context['head_search_description'] = unicode(researcher)
         context['breadcrumbs'] = researcher.breadcrumbs()
         return context
@@ -266,7 +270,7 @@ class DepartmentPapersView(PaperSearchView):
         context['department'] = self.dept
         context['search_description'] = context['head_search_description'] = (
             unicode(self.dept))
-        context['breadcrumbs'] = self.dept.breadcrumbs()+[(_('Papers'), '')]
+        context['breadcrumbs'] = self.dept.breadcrumbs() + [(_('Papers'), '')]
         return context
 
 
@@ -298,9 +302,9 @@ class PublisherPapersView(PaperSearchView):
         context = super(PublisherPapersView, self)\
             .get_context_data(**kwargs)
         context[self.publisher_key] = publisher
-        context['search_description'] += self.published_by+unicode(publisher)
+        context['search_description'] += self.published_by + unicode(publisher)
         context['head_search_description'] = unicode(publisher)
-        context['breadcrumbs'] = publisher.breadcrumbs()+[(_('Papers'), '')]
+        context['breadcrumbs'] = publisher.breadcrumbs() + [(_('Papers'), '')]
         return context
 
 
@@ -402,7 +406,7 @@ class PaperView(SlugDetailView):
             except (TypeError, ValueError, DepositRecord.DoesNotExist):
                 pass
         context['can_be_deposited'] = (not self.request.user.is_authenticated
-                    or self.object.can_be_deposited(self.request.user))
+                                       or self.object.can_be_deposited(self.request.user))
 
         # Pending deposits
         context['pending_deposits'] = self.object.depositrecord_set.filter(
@@ -416,6 +420,6 @@ class PaperView(SlugDetailView):
             kwargs['pk'] = self.object.pk
         return super(PaperView, self).redirect(**kwargs)
 
+
 class InstitutionsMapView(generic.base.TemplateView):
     template_name = 'papers/institutions.html'
-

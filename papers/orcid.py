@@ -112,7 +112,7 @@ class OrcidProfile(object):
 
         for affiliation in lst:
             disamb = jpath('organization/disambiguated-organization',
-                affiliation, default={})
+                           affiliation, default={})
             source = disamb.get('disambiguation-source')
             inst_id = disamb.get('disambiguated-organization-identifier')
             name = jpath('organization/name', affiliation)
@@ -121,14 +121,14 @@ class OrcidProfile(object):
             # we skip ringgold identifiers, because they suck:
             # https://github.com/ORCID/ORCID-Source/issues/3297
             if source and inst_id and source.lower() != 'ringgold':
-                identifier = unicode(source).lower()+'-'+unicode(inst_id)
+                identifier = unicode(source).lower() + '-' + unicode(inst_id)
 
             if name and country:
                 return {
-                    'identifier':identifier,
-                    'name':name,
-                    'country':country,
-                    }
+                    'identifier': identifier,
+                    'name': name,
+                    'country': country,
+                }
         return None
 
     @property
@@ -143,7 +143,8 @@ class OrcidProfile(object):
         If there is no such name, returns the given and family names on the profile
         (they should exist)
         """
-        name_item = jpath('orcid-profile/orcid-bio/personal-details', self.json)
+        name_item = jpath(
+            'orcid-profile/orcid-bio/personal-details', self.json)
         name = jpath('credit-name/value', name_item)
         if name is not None:
             return parse_comma_name(name)
@@ -156,7 +157,8 @@ class OrcidProfile(object):
         Returns the list of other names listed on the ORCiD profile.
         This includes the (given,family) name if a credit name was defined.
         """
-        name_item = jpath('orcid-profile/orcid-bio/personal-details', self.json)
+        name_item = jpath(
+            'orcid-profile/orcid-bio/personal-details', self.json)
         names = []
         credit_name = jpath('credit-name/value', name_item)
         if credit_name is not None:
@@ -185,8 +187,8 @@ class OrcidProfile(object):
             'rows': 10,
             'start': 0,
             'q': 'family-name:%s given-names:%s' % (last, first),
-            }
-        url = baseurl+'?'+urlencode(dct)
+        }
+        url = baseurl + '?' + urlencode(dct)
         try:
             r = requests.get(url)
             # the namespace is the same for both the production and the
@@ -231,12 +233,12 @@ class OrcidProfile(object):
                     './ns:orcid-profile/ns:orcid-bio/ns:keywords/ns:keyword/text()', namespaces=ns)
 
                 yield {
-                        'first': candidateFirst,
-                        'last': candidateLast,
-                        'orcid': orcid,
-                        'homepage': homepage,
-                        'keywords': keywords,
-                      }
+                    'first': candidateFirst,
+                    'last': candidateLast,
+                    'orcid': orcid,
+                    'homepage': homepage,
+                    'keywords': keywords,
+                }
 
         except etree.XMLSyntaxError as e:
             print e

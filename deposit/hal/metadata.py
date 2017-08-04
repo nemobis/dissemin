@@ -72,28 +72,28 @@ HAL_TOPIC_CHOICES = [
     ('SPI', __('Engineering sciences')),
     ('STAT', __('Statistics')),
     ('QFIN', __('Economy and quantitative finance')),
-  ]
+]
 
 
 def aofrDocumentType(paper):
     if all([not p.has_publication_metadata() for p in paper.oairecords]):
         return 'OTHER'
     tr = {
-            'journal-article': 'ART',
-            # (sinon les métadonnées sont énervantes avec ça:
-            # bypass: 'proceedings-article': 'COUV',
-            'proceedings-article': 'COMM',
-            'book-chapter': 'COUV',
-            'book': 'OUV',
-            'proceedings': 'DOUV',
-            'reference-entry': 'OTHER',
-            'poster': 'POSTER',
-            'report': 'REPORT',
-            'thesis': 'THESE',
-            'dataset': 'OTHER',
-            'preprint': 'UNDEFINED',
-            'other': 'OTHER',
-         }
+        'journal-article': 'ART',
+        # (sinon les métadonnées sont énervantes avec ça:
+        # bypass: 'proceedings-article': 'COUV',
+        'proceedings-article': 'COMM',
+        'book-chapter': 'COUV',
+        'book': 'OUV',
+        'proceedings': 'DOUV',
+        'reference-entry': 'OTHER',
+        'poster': 'POSTER',
+        'report': 'REPORT',
+        'thesis': 'THESE',
+        'dataset': 'OTHER',
+        'preprint': 'UNDEFINED',
+        'other': 'OTHER',
+    }
     return tr[paper.doctype]
 
 
@@ -109,7 +109,7 @@ class AOFRFormatter(MetadataFormatter):
         xmlns_uri = 'http://www.tei-c.org/ns/1.0'
         xmlns = '{%s}' % xmlns_uri
         nsmap = {None: xmlns_uri, 'hal': 'http://hal.archives-ouvertes.fr'}
-        tei = etree.Element(xmlns+'TEI', nsmap=nsmap)
+        tei = etree.Element(xmlns + 'TEI', nsmap=nsmap)
         text = addChild(tei, 'text')
         body = addChild(text, 'body')
         listBibl = addChild(body, 'listBibl')
@@ -119,8 +119,8 @@ class AOFRFormatter(MetadataFormatter):
         titleStmt = addChild(biblFull, 'titleStmt')
 
         self.renderTitleAuthors(titleStmt, paper,
-                form.cleaned_data['affiliation'],
-                form.cleaned_data['depositing_author'])
+                                form.cleaned_data['affiliation'],
+                                form.cleaned_data['depositing_author'])
 
         # editionStmt
         if filename is not None:
@@ -178,13 +178,13 @@ class AOFRFormatter(MetadataFormatter):
         analytic = addChild(biblStruct, 'analytic')
 
         self.renderTitleAuthors(analytic, paper,
-                form.cleaned_data['affiliation'],
-                form.cleaned_data['depositing_author'])
+                                form.cleaned_data['affiliation'],
+                                form.cleaned_data['depositing_author'])
 
         for publication in paper.publications:
             date = publication.pubdate or paper.pubdate
             self.renderPubli(biblStruct, publication, halType, date)
-            break # stop after the first publication
+            break  # stop after the first publication
 
         if not paper.publications:
             # we still need to add an <imprint> for
@@ -231,7 +231,7 @@ class AOFRFormatter(MetadataFormatter):
         return tei
 
     def renderTitleAuthors(self, root, paper,
-            author_structure, depositing_id):
+                           author_structure, depositing_id):
         """
         :param author_structure: the structure id of the depositing
 author
@@ -260,8 +260,8 @@ author
 
             if idx == depositing_id:
                 affiliation = addChild(node, 'affiliation')
-                affiliation.attrib['ref'] =('#struct-%s' %
-                        unicode(author_structure))
+                affiliation.attrib['ref'] = ('#struct-%s' %
+                                             unicode(author_structure))
 
     def renderPubli(self, biblStruct, publi, halType, pubdate):
         # TODO: handle publication type properly
@@ -318,5 +318,3 @@ author
 
     def renderJournal(self, root, journal):
         pass
-
-

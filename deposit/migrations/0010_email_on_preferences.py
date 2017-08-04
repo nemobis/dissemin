@@ -16,11 +16,13 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='userpreferences',
             name='email',
-            field=models.EmailField(blank=True, help_text='We will use this email address to notify you when your deposits are accepted.', max_length=512, null=True),
+            field=models.EmailField(
+                blank=True, help_text='We will use this email address to notify you when your deposits are accepted.', max_length=512, null=True),
         ),
         migrations.AlterField(
             model_name='userpreferences',
             name='preferred_repository',
-            field=models.ForeignKey(blank=True, help_text='This repository will be used by default for your deposits.', null=True, on_delete=django.db.models.deletion.CASCADE, related_name='preferred_by', to='deposit.Repository'),
+            field=models.ForeignKey(blank=True, help_text='This repository will be used by default for your deposits.',
+                                    null=True, on_delete=django.db.models.deletion.CASCADE, related_name='preferred_by', to='deposit.Repository'),
         ),
     ]

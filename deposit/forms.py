@@ -75,7 +75,7 @@ def wrap_with_prefetch_status(baseWidget, get_callback, fieldname):
         callback = get_callback()
         if value:
             return base_html
-        return ('<span class="prefetchingFieldStatus" data-callback="%s" data-fieldid="%s" data-fieldname="%s" data-objfieldname="%s"></span>' % (callback, attrs['id'], name, fieldname))+base_html
+        return ('<span class="prefetchingFieldStatus" data-callback="%s" data-fieldid="%s" data-fieldname="%s" data-objfieldname="%s"></span>' % (callback, attrs['id'], name, fieldname)) + base_html
     baseWidget.render = new_render
     return baseWidget
 
@@ -84,6 +84,7 @@ class BaseMetadataForm(forms.Form):
     """
     Base form for repository-specific options
     """
+
     def __init__(self, paper, **kwargs):
         super(BaseMetadataForm, self).__init__(**kwargs)
         # Subclasses can reimplement this and do things based on the
@@ -98,19 +99,20 @@ class BaseMetadataForm(forms.Form):
         widget=forms.HiddenInput
     )
 
+
 class FormWithAbstract(BaseMetadataForm):
     """
     A simple metadata form, only including the abstract.
     Repositories can subclass this form to add more fields.
     """
     abstract = forms.CharField(
-            label=__('Abstract'),
-            required=True,
-            widget=wrap_with_prefetch_status(forms.Textarea,
-                                             lambda: reverse(
-                                                 'ajax-waitForConsolidatedField'),
-                                             'paper_id')(attrs={'class': 'form-control'})
-            )
+        label=__('Abstract'),
+        required=True,
+        widget=wrap_with_prefetch_status(forms.Textarea,
+                                         lambda: reverse(
+                                             'ajax-waitForConsolidatedField'),
+                                         'paper_id')(attrs={'class': 'form-control'})
+    )
 
 
 ### Form for global preferences ###
@@ -120,12 +122,13 @@ class PreferredRepositoryField(forms.ModelChoiceField):
         kwargs['empty_label'] = _('No preferred repository')
         super(PreferredRepositoryField, self).__init__(*args, **kwargs)
 
+
 class UserPreferencesForm(forms.ModelForm):
     class Meta:
         model = UserPreferences
         fields = ['email', 'preferred_repository']
         widgets = {
-            'preferred_repository': forms.RadioSelect(attrs={'class':'radio-margin'}),
+            'preferred_repository': forms.RadioSelect(attrs={'class': 'radio-margin'}),
         }
         field_classes = {
             'preferred_repository': PreferredRepositoryField,
@@ -140,6 +143,3 @@ class UserPreferencesForm(forms.ModelForm):
         self.helper.add_input(
             Submit('submit', __('Save')),
         )
-
-
-

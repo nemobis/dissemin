@@ -71,7 +71,7 @@ class ZenodoProtocol(RepositoryProtocol):
         if self.repository.api_key is None:
             raise DepositError(__("No Zenodo API key provided."))
         api_key = self.repository.api_key
-        api_url_with_key = self.api_url+'?access_token='+api_key
+        api_url_with_key = self.api_url + '?access_token=' + api_key
 
         deposit_result = DepositResult()
 
@@ -94,7 +94,7 @@ class ZenodoProtocol(RepositoryProtocol):
         self.log("### Uploading the PDF")
         data = {'name': 'article.pdf'}
         files = {'file': open(pdf, 'rb')}
-        r = requests.post(self.api_url+"/%s/files?access_token=%s" % (deposition_id, api_key),
+        r = requests.post(self.api_url + "/%s/files?access_token=%s" % (deposition_id, api_key),
                           data=data, files=files)
         self.log_request(r, 201, __(
             'Unable to transfer the document to Zenodo.'))
@@ -102,7 +102,7 @@ class ZenodoProtocol(RepositoryProtocol):
         # Creating the metadata
         self.log("### Generating the metadata")
         data = self.createMetadata(form)
-        self.log(json.dumps(data, indent=4)+'')
+        self.log(json.dumps(data, indent=4) + '')
 
         # Check that there is an abstract
         if data['metadata'].get('description', '') == '':
@@ -112,7 +112,7 @@ class ZenodoProtocol(RepositoryProtocol):
 
         # Submitting the metadata
         self.log("### Submitting the metadata")
-        r = requests.put(self.api_url+"/%s?access_token=%s" % (deposition_id, api_key),
+        r = requests.put(self.api_url + "/%s?access_token=%s" % (deposition_id, api_key),
                          data=json.dumps(data), headers=headers)
         self.log_request(r, 200, __(
             'Unable to submit paper metadata to Zenodo.'))
@@ -120,7 +120,7 @@ class ZenodoProtocol(RepositoryProtocol):
         if dry_run:
             # Deleting the deposition
             self.log("### Deleting the deposition")
-            r = requests.delete(self.api_url+"/%s?access_token=%s" %
+            r = requests.delete(self.api_url + "/%s?access_token=%s" %
                                 (deposition_id, api_key))
             self.log(r.text)
             deposit_result.status = 'faked'
@@ -129,15 +129,16 @@ class ZenodoProtocol(RepositoryProtocol):
         else:
             self.log("### Publishing the deposition")
             r = requests.post(
-                self.api_url+"/%s/actions/publish?access_token=%s" % (deposition_id, api_key))
+                self.api_url + "/%s/actions/publish?access_token=%s" % (deposition_id, api_key))
             self.log_request(r, 202, __(
                 'Unable to publish the deposition on Zenodo.'))
             self.log(r.text)
 
             deposition_object = r.json()
-            links = deposition_object.get('links',{})
-            deposit_result.splash_url = links.get('record_html', 'https://zenodo.org/')
-            deposit_result.pdf_url = deposit_result.splash_url+'/files/article.pdf'
+            links = deposition_object.get('links', {})
+            deposit_result.splash_url = links.get(
+                'record_html', 'https://zenodo.org/')
+            deposit_result.pdf_url = deposit_result.splash_url + '/files/article.pdf'
 
         return deposit_result
 
@@ -160,7 +161,7 @@ class ZenodoProtocol(RepositoryProtocol):
 
         # Creators
         def formatAuthor(author):
-            res = {'name': author.name.last+', '+author.name.first}
+            res = {'name': author.name.last + ', ' + author.name.first}
             if author.researcher and author.researcher.orcid:
                 res['orcid'] = author.researcher.orcid
             # TODO: affiliation
@@ -210,23 +211,24 @@ class ZenodoProtocol(RepositoryProtocol):
         data = {"metadata": metadata}
         return data
 
+
 protocol_registry.register(ZenodoProtocol)
 
 
 def swordDocumentType(paper):
     tr = {
-            'journal-article': ('publication', 'article'),
-            'proceedings-article': ('publication', 'conferencepaper'),
-            'book-chapter': ('publication', 'section'),
-            'book': ('publication', 'book'),
-            'journal-issue': ('publication', 'book'),
-            'proceedings': ('publication', 'book'),
-            'reference-entry': ('publication', 'other'),
-            'poster': ('poster',),
-            'report': ('publication', 'report'),
-            'thesis': ('publication', 'thesis'),
-            'dataset': ('dataset',),
-            'preprint': ('publication', 'preprint'),
-            'other': ('publication', 'other'),
-         }
+        'journal-article': ('publication', 'article'),
+        'proceedings-article': ('publication', 'conferencepaper'),
+        'book-chapter': ('publication', 'section'),
+        'book': ('publication', 'book'),
+        'journal-issue': ('publication', 'book'),
+        'proceedings': ('publication', 'book'),
+        'reference-entry': ('publication', 'other'),
+        'poster': ('poster',),
+        'report': ('publication', 'report'),
+        'thesis': ('publication', 'thesis'),
+        'dataset': ('dataset',),
+        'preprint': ('publication', 'preprint'),
+        'other': ('publication', 'other'),
+    }
     return tr[paper.doctype]

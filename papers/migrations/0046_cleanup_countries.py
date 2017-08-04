@@ -5,8 +5,10 @@ from __future__ import unicode_literals
 from django.db import migrations
 from django_countries.fields import countries
 
+
 def backwards(apps, se):
     pass
+
 
 def cleanup(apps, se):
     i = apps.get_model('papers', 'Institution')
@@ -14,6 +16,7 @@ def cleanup(apps, se):
         if inst.country.code not in countries:
             inst.country = None
             inst.save(update_fields=['country'])
+
 
 class Migration(migrations.Migration):
 

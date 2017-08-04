@@ -66,8 +66,8 @@ class OSFProtocolTest(ProtocolTest):
         self.proto.init_deposit(self.p1, self.user)
         tags = " Witch,   Broom  ,  ,Bed "
         form = self.proto.get_bound_form(
-                        {"license": "58fd62fcda3e2400012ca5d3",
-                         "abstract": "Treguna Mekoides Trecorum Satis Dee.",
+            {"license": "58fd62fcda3e2400012ca5d3",
+             "abstract": "Treguna Mekoides Trecorum Satis Dee.",
                          "subjects": ['59552884da3e240081ba32de'],
                          "tags": tags})
 
@@ -79,11 +79,11 @@ class OSFProtocolTest(ProtocolTest):
         paper = Paper.create_by_doi('10.1007/978-3-662-47666-6_5')
 
         request = self.dry_deposit(
-                  paper,
-                  license='58fd62fcda3e2400012ca5d3',
-                  abstract='Salagadoola menchicka boola bibbidi-bobbidi-boo.',
-                  subjects=['59552884da3e240081ba32de'],
-                  tags='Pumpkin, Mouse, Godmother')
+            paper,
+            license='58fd62fcda3e2400012ca5d3',
+            abstract='Salagadoola menchicka boola bibbidi-bobbidi-boo.',
+            subjects=['59552884da3e240081ba32de'],
+            tags='Pumpkin, Mouse, Godmother')
 
         self.assertEqualOrLog(request.status, 'published')
 
@@ -91,11 +91,11 @@ class OSFProtocolTest(ProtocolTest):
         paper = Paper.create_by_doi('10.1007/978-3-662-47666-6_5')
 
         request = self.dry_deposit(
-                  paper,
-                  license='58fd62fcda3e2400012ca5cc',
-                  abstract='Higitus Figitus Migitus Mum.',
-                  subjects=['59552884da3e240081ba32de'],
-                  tags='Sword, King, Wizard')
+            paper,
+            license='58fd62fcda3e2400012ca5cc',
+            abstract='Higitus Figitus Migitus Mum.',
+            subjects=['59552884da3e240081ba32de'],
+            tags='Sword, King, Wizard')
 
         self.assertEqualOrLog(request.status, 'published')
 

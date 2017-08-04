@@ -36,14 +36,14 @@ get_model = apps.get_model
 
 
 OA_STATUS_CHOICES = (
-        ('OA', _('Open access'), _('Freely available from the publisher.')),
-        ('OK', _('Allows pre/post prints'),
-         _('The publisher sells copies but allows authors to deposit some version of the article in a repository.')),
-        ('NOK', _('Forbids pre/post prints'),
-         _('The publisher forbids authors to deposit any version of their article online.')),
-        ('UNK', _('Policy unclear'), _(
-            'For complicated policies, unknown publishers and unpublished documents.')),
-   )
+    ('OA', _('Open access'), _('Freely available from the publisher.')),
+    ('OK', _('Allows pre/post prints'),
+     _('The publisher sells copies but allows authors to deposit some version of the article in a repository.')),
+    ('NOK', _('Forbids pre/post prints'),
+     _('The publisher forbids authors to deposit any version of their article online.')),
+    ('UNK', _('Policy unclear'), _(
+        'For complicated policies, unknown publishers and unpublished documents.')),
+)
 
 POLICY_CHOICES = [('can', _('Allowed')),
                   ('cannot', _('Forbidden')),
@@ -138,7 +138,7 @@ class Publisher(models.Model):
         if not self.alias:
             return self.name
         else:
-            return self.name+' ('+self.alias+')'
+            return self.name + ' (' + self.alias + ')'
 
     @property
     def publi_count(self):
@@ -233,7 +233,7 @@ class Journal(models.Model):
         self.stats.update_from_search_queryset(sqs)
 
     def breadcrumbs(self):
-        return self.publisher.breadcrumbs()+[(unicode(self), '')]
+        return self.publisher.breadcrumbs() + [(unicode(self), '')]
 
     def __unicode__(self):
         return self.title
@@ -288,7 +288,7 @@ class AliasPublisher(models.Model):
     unique_together = ('name', 'publisher')
 
     def __unicode__(self):
-        return self.name + ' --'+str(self.count)+'--> '+unicode(self.publisher)
+        return self.name + ' --' + str(self.count) + '--> ' + unicode(self.publisher)
 
     @classmethod
     def increment(cls, name, publisher):

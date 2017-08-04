@@ -3,21 +3,22 @@ from __future__ import unicode_literals
 
 from django.db import models, migrations
 
+
 def convert_publications(apps, schema_editor):
     OaiRecord = apps.get_model('papers', 'OaiRecord')
     Publication = apps.get_model('papers', 'Publication')
 
     OaiSource = apps.get_model('papers', 'OaiSource')
     source, _ = OaiSource.objects.get_or_create(identifier='crossref',
-            defaults={'name':'Crossref','oa':False,'priority':1,
-                'default_pubtype':'journal-article'})
+                                                defaults={'name': 'Crossref', 'oa': False, 'priority': 1,
+                                                          'default_pubtype': 'journal-article'})
 
     for p in Publication.objects.all():
         if not p.doi:
             continue
         r = OaiRecord()
-        r.identifier = 'oai:crossref.org:'+p.doi
-        r.splash_url = 'https://doi.org/'+p.doi
+        r.identifier = 'oai:crossref.org:' + p.doi
+        r.splash_url = 'https://doi.org/' + p.doi
         r.pdf_url = p.pdf_url
         r.description = p.abstract
         r.pubtype = p.pubtype
@@ -59,7 +60,8 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='oairecord',
             name='doi',
-            field=models.CharField(max_length=1024, unique=True, null=True, blank=True),
+            field=models.CharField(
+                max_length=1024, unique=True, null=True, blank=True),
         ),
         migrations.AddField(
             model_name='oairecord',
@@ -69,7 +71,8 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='oairecord',
             name='journal',
-            field=models.ForeignKey(blank=True, to='publishers.Journal', null=True),
+            field=models.ForeignKey(
+                blank=True, to='publishers.Journal', null=True),
         ),
         migrations.AddField(
             model_name='oairecord',
@@ -89,7 +92,8 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='oairecord',
             name='publisher',
-            field=models.ForeignKey(blank=True, to='publishers.Publisher', null=True),
+            field=models.ForeignKey(
+                blank=True, to='publishers.Publisher', null=True),
         ),
         migrations.AddField(
             model_name='oairecord',
@@ -101,7 +105,5 @@ class Migration(migrations.Migration):
             name='volume',
             field=models.CharField(max_length=64, null=True, blank=True),
         ),
-     #   migrations.RunPython(convert_publications)
+        #   migrations.RunPython(convert_publications)
     ]
-
-

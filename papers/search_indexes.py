@@ -4,13 +4,17 @@ from papers.utils import remove_diacritics
 from .models import Paper
 
 # from https://github.com/django-haystack/django-haystack/issues/204#issuecomment-544579
+
+
 class IntegerMultiValueField(indexes.MultiValueField):
     field_type = 'integer'
+
 
 class PaperIndex(indexes.SearchIndex, indexes.Indexable):
     text = indexes.CharField(document=True, model_attr='title')
     pubdate = indexes.DateField(model_attr='pubdate')
-    combined_status = indexes.CharField(model_attr='combined_status', faceted=True)
+    combined_status = indexes.CharField(
+        model_attr='combined_status', faceted=True)
     doctype = indexes.CharField(model_attr='doctype', faceted=True)
     visible = indexes.BooleanField(model_attr='visible')
     oa_status = indexes.CharField(model_attr='oa_status', faceted=True)
@@ -43,7 +47,7 @@ class PaperIndex(indexes.SearchIndex, indexes.Indexable):
         return "last_modified"
 
     def prepare_text(self, obj):
-        return remove_diacritics(obj.title+' '+(' '.join(
+        return remove_diacritics(obj.title + ' ' + (' '.join(
             self.prepare_authors_full(obj))))
 
     def prepare_authors_full(self, obj):
@@ -61,8 +65,8 @@ class PaperIndex(indexes.SearchIndex, indexes.Indexable):
 
     def prepare_institutions(self, obj):
         return filter(lambda x: x is not None,
-           [r.institution_id
-            for r in obj.researchers])
+                      [r.institution_id
+                       for r in obj.researchers])
 
     def prepare_publisher(self, obj):
         for r in obj.oairecords:

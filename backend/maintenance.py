@@ -44,6 +44,7 @@ import haystack
 from haystack.exceptions import SkipDocument
 from haystack.constants import ID
 
+
 def update_index_for_model(model, batch_size=256, batches_per_commit=10, firstpk=0):
     """
     More efficient update of the search index for large models such as
@@ -64,7 +65,7 @@ def update_index_for_model(model, batch_size=256, batches_per_commit=10, firstpk
     qs = model.objects.order_by('pk')
     lastpk_object = list(model.objects.order_by('-pk')[:1])
 
-    if not lastpk_object: # No object in the model
+    if not lastpk_object:  # No object in the model
         return
 
     lastpk = lastpk_object[0].pk
@@ -98,7 +99,8 @@ def update_index_for_model(model, batch_size=256, batches_per_commit=10, firstpk
         documents_sent = False
         while not documents_sent:
             try:
-                bulk(backend.conn, prepped_docs, index=backend.index_name, doc_type='modelresult')
+                bulk(backend.conn, prepped_docs,
+                     index=backend.index_name, doc_type='modelresult')
                 documents_sent = True
             except ConnectionTimeout as e:
                 print(e)
@@ -111,10 +113,11 @@ def update_index_for_model(model, batch_size=256, batches_per_commit=10, firstpk
 
         if indexed >= 5000:
             curtime = datetime.utcnow()
-            rate = int(indexed / (curtime-starttime).total_seconds())
-            print "%d obj/s, %d / %d" % (rate,firstpk,lastpk)
+            rate = int(indexed / (curtime - starttime).total_seconds())
+            print "%d obj/s, %d / %d" % (rate, firstpk, lastpk)
             starttime = curtime
             indexed = 0
+
 
 def enumerate_large_qs(queryset, key='pk', batch_size=256):
     """
@@ -126,7 +129,7 @@ def enumerate_large_qs(queryset, key='pk', batch_size=256):
     while found:
         sliced = queryset.order_by(key)
         if lastval is not None:
-            sliced = sliced.filter(**{key+'__gt':lastval})
+            sliced = sliced.filter(**{key + '__gt': lastval})
         print lastval
         sliced = sliced[:batch_size]
 
@@ -136,11 +139,13 @@ def enumerate_large_qs(queryset, key='pk', batch_size=256):
             lastval = getattr(elem, key)
             yield elem
 
+
 def update_availability():
     for paper in enumerate_large_qs(Paper.objects.filter(oa_status='UNK')):
         paper.update_availability()
         if paper.oa_status != 'UNK':
             paper.update_index()
+
 
 def cleanup_researchers():
     """
@@ -152,7 +157,7 @@ def cleanup_researchers():
         if not nb_papers:
             deleted_count += 1
             p.delete()
-    print "Deleted "+str(deleted_count)+" researchers"
+    print "Deleted " + str(deleted_count) + " researchers"
 
 
 def cleanup_names(dry_run=False):
@@ -165,7 +170,7 @@ def cleanup_names(dry_run=False):
             deleted_count += 1
             if not dry_run:
                 n.delete()
-    print "Deleted "+str(deleted_count)+" names"
+    print "Deleted " + str(deleted_count) + " names"
 
 
 def update_paper_statuses():
@@ -176,6 +181,7 @@ def update_paper_statuses():
     papers = Paper.objects.all()
     for p in papers:
         p.update_availability()
+
 
 def cleanup_paper_researcher_ids():
     """

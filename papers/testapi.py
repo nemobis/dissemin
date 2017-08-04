@@ -23,6 +23,7 @@ from __future__ import unicode_literals
 from papers.testajax import JsonRenderingTest
 from papers.models import Paper
 
+
 class PaperApiTest(JsonRenderingTest):
 
     def test_valid_doi(self):
@@ -46,7 +47,7 @@ class PaperApiTest(JsonRenderingTest):
             '{"title":"this is a test","date":"2008-03","authors":[]}',
             '{"title":"this is a test","date":"2008-03","authors":["lsc"]}',
             '{"title":"test","date":"2008-03","authors":[{"error":"test"}]}',
-            ]
+        ]
 
         for payload in invalid_payloads:
             self.checkJson(self.postPage('api-paper-query', postargs=payload,
@@ -55,7 +56,7 @@ class PaperApiTest(JsonRenderingTest):
         valid_payloads = [
             '{"title":"Strange resonances measured in Al+Al collisions at sqrt {S_ NN }= 2.65 GeV with the FOPI detector","date":"2015","authors":[{"plain":"Lopez, X."}]}',
             '{"doi":"10.1016/j.paid.2009.02.013"}',
-                ]
+        ]
         for payload in valid_payloads:
             self.checkJson(self.postPage('api-paper-query', postargs=payload,
                                          postkwargs={'content_type': 'application/json'}), 200)

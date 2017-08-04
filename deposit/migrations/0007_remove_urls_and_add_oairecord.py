@@ -5,20 +5,23 @@ from __future__ import unicode_literals
 from django.db import migrations, models
 import django.db.models.deletion
 
+
 def find_oairecords(apps, schema_editor):
-    DepositRecord = apps.get_model('deposit','DepositRecord')
+    DepositRecord = apps.get_model('deposit', 'DepositRecord')
     OaiRecord = apps.get_model('papers', 'OaiRecord')
     for d in DepositRecord.objects.all():
         try:
             r = OaiRecord.objects.get(identifier='deposition:%d:%s'
-                % (d.repository_id, d.identifier))
+                                      % (d.repository_id, d.identifier))
             d.oairecord = r
             d.save()
         except OaiRecord.DoesNotExist:
             pass
 
+
 def backwards(*args):
     pass
+
 
 class Migration(migrations.Migration):
 
@@ -39,12 +42,14 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='depositrecord',
             name='oairecord',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='papers.OaiRecord'),
+            field=models.ForeignKey(
+                blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='papers.OaiRecord'),
         ),
         migrations.AlterField(
             model_name='depositrecord',
             name='status',
-            field=models.CharField(choices=[('failed', 'Failed'), ('faked', 'Faked'), ('pending', 'Pending publication'), ('published', 'Published'), ('refused', 'Refused by the repository'), ('deleted', 'Deleted')], max_length=64),
+            field=models.CharField(choices=[('failed', 'Failed'), ('faked', 'Faked'), ('pending', 'Pending publication'), (
+                'published', 'Published'), ('refused', 'Refused by the repository'), ('deleted', 'Deleted')], max_length=64),
         ),
         migrations.RunPython(find_oairecords, backwards),
     ]

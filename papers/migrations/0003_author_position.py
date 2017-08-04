@@ -3,18 +3,20 @@ from __future__ import unicode_literals
 
 from django.db import migrations, models
 
+
 def prefill_authors(apps, schema_editor):
-    Paper = apps.get_model('papers','Paper')
+    Paper = apps.get_model('papers', 'Paper')
     size = 100
     cursor = 0
     count = Paper.objects.count()
     while cursor < count:
-        papers = Paper.objects.all()[cursor:cursor+size]
+        papers = Paper.objects.all()[cursor:cursor + size]
         cursor += size
         for paper in papers:
             for idx, author in enumerate(paper.author_set.all().order_by('pk')):
                 author.position = idx
                 author.save(update_fields=['position'])
+
 
 class Migration(migrations.Migration):
 

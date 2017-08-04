@@ -18,10 +18,14 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='UserPreferences',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('last_repository', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='last_used_by', to='deposit.Repository')),
-                ('preferred_repository', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='preferrend_by', to='deposit.Repository')),
-                ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                ('id', models.AutoField(auto_created=True,
+                                        primary_key=True, serialize=False, verbose_name='ID')),
+                ('last_repository', models.ForeignKey(blank=True, null=True,
+                                                      on_delete=django.db.models.deletion.CASCADE, related_name='last_used_by', to='deposit.Repository')),
+                ('preferred_repository', models.ForeignKey(blank=True, null=True,
+                                                           on_delete=django.db.models.deletion.CASCADE, related_name='preferrend_by', to='deposit.Repository')),
+                ('user', models.OneToOneField(
+                    on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
         ),
     ]

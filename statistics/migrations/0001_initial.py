@@ -13,7 +13,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='AccessStatistics',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('id', models.AutoField(verbose_name='ID',
+                                        serialize=False, auto_created=True, primary_key=True)),
                 ('num_oa', models.IntegerField(default=0)),
                 ('num_ok', models.IntegerField(default=0)),
                 ('num_couldbe', models.IntegerField(default=0)),

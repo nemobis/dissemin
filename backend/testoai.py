@@ -147,7 +147,6 @@ class OaiTest(TestCase):
         records.add(OaiRecord.objects.get(identifier=second_id))
         self.assertSetEqual(set(new_paper.oairecords), records)
 
-
     def test_create_match_doi(self):
         """
         Addition of an OAI record when it is matched
@@ -233,7 +232,7 @@ class OaiTest(TestCase):
             # Bad publication date
             ('ftsehiruniv:oai:earsiv.sehir.edu.tr:11498/28266',
              'base_dc'),
-         ]
+        ]
         for i, f in identifiers:
             self.assertEqual(
                 self.create(i, f),
@@ -274,22 +273,24 @@ class OaiTest(TestCase):
     def test_crossref_invalid_metadata(self):
         # authors with no family name
         paper = self.create(
-                'oai:crossref.org:10.4156/aiss.vol3.issue9.31',
-                'citeproc')
+            'oai:crossref.org:10.4156/aiss.vol3.issue9.31',
+            'citeproc')
         self.assertEqual(paper, None)
 
     def test_datacite(self):
         paper = self.create(
-                'ftdatacite:oai:oai.datacite.org:8558707',
-                'base_dc')
+            'ftdatacite:oai:oai.datacite.org:8558707',
+            'base_dc')
         self.assertTrue(paper.pdf_url)
 
     def test_pmc(self):
         paper = self.create(
-                'ftpubmed:oai:pubmedcentral.nih.gov:1968744',
-                'base_dc')
-        self.assertEqual(paper.pdf_url, 'http://www.ncbi.nlm.nih.gov/pmc/articles/PMC1968744')
+            'ftpubmed:oai:pubmedcentral.nih.gov:1968744',
+            'base_dc')
+        self.assertEqual(
+            paper.pdf_url, 'http://www.ncbi.nlm.nih.gov/pmc/articles/PMC1968744')
         p2 = self.create(
-                'ftpubmed:oai:pubmedcentral.nih.gov:4131942',
-                'base_dc')
-        self.assertEqual(p2.pdf_url,'http://www.ncbi.nlm.nih.gov/pubmed/24806729')
+            'ftpubmed:oai:pubmedcentral.nih.gov:4131942',
+            'base_dc')
+        self.assertEqual(
+            p2.pdf_url, 'http://www.ncbi.nlm.nih.gov/pubmed/24806729')

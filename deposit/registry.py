@@ -53,10 +53,11 @@ class ProtocolRegistry(object):
             for app in settings.INSTALLED_APPS:
                 if protocol_module_re.match(app):
                     try:
-                        importlib.import_module(app+'.protocol')
+                        importlib.import_module(app + '.protocol')
                     except ImportError as e:
-                        print "ImportError in "+app+'.protocol'
+                        print "ImportError in " + app + '.protocol'
                         print e
         self.loaded = True
+
 
 protocol_registry = ProtocolRegistry()

@@ -19,6 +19,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='haldepositpreferences',
             name='on_behalf_of',
-            field=models.CharField(blank=True, help_text='If set, deposits will be associated to this HAL account.', max_length=128, null=True, verbose_name='HAL username'),
+            field=models.CharField(blank=True, help_text='If set, deposits will be associated to this HAL account.',
+                                   max_length=128, null=True, verbose_name='HAL username'),
         ),
     ]

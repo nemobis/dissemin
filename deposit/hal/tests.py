@@ -87,10 +87,10 @@ class HALProtocolTest(ProtocolTest):
         """
         p = Paper.create_by_doi('10.1007/978-3-662-47666-6_5')
         r = self.dry_deposit(p,
-            abstract='this is an abstract',
-            topic='INFO',
-            depositing_author=0,
-            affiliation=59704) # ENS
+                             abstract='this is an abstract',
+                             topic='INFO',
+                             depositing_author=0,
+                             affiliation=59704)  # ENS
         self.assertEqualOrLog(r.status, 'faked')
 
     def test_lncs(self):
@@ -100,12 +100,11 @@ class HALProtocolTest(ProtocolTest):
         p = Paper.create_by_doi('10.1007/978-3-662-47666-6_5')
         p.authors_list = [p.authors_list[0]]
         r = self.dry_deposit(p,
-            abstract='this is an abstract',
-            topic='INFO',
-            depositing_author=0,
-            affiliation=59704) # ENS
+                             abstract='this is an abstract',
+                             topic='INFO',
+                             depositing_author=0,
+                             affiliation=59704)  # ENS
         self.assertEqualOrLog(r.status, 'faked')
-
 
     def test_lics(self):
         """
@@ -114,10 +113,10 @@ class HALProtocolTest(ProtocolTest):
         p = Paper.create_by_doi('10.1109/lics.2015.37')
         p.authors_list = [p.authors_list[0]]
         r = self.dry_deposit(p,
-             abstract='here is my great result',
-             topic='NLIN',
-             depositing_author=0,
-             affiliation=128940)
+                             abstract='here is my great result',
+                             topic='NLIN',
+                             depositing_author=0,
+                             affiliation=128940)
         self.assertEqualOrLog(r.status, 'faked')
 
     def test_journal_article(self):
@@ -127,10 +126,10 @@ class HALProtocolTest(ProtocolTest):
         p = Paper.create_by_doi('10.1016/j.agee.2004.10.001')
         p.authors_list = [p.authors_list[0]]
         r = self.dry_deposit(p,
-             abstract='here is my great result',
-             topic='SDV',
-             depositing_author=0,
-             affiliation=128940)
+                             abstract='here is my great result',
+                             topic='SDV',
+                             depositing_author=0,
+                             affiliation=128940)
         self.assertEqualOrLog(r.status, 'faked')
 
     def test_topic_set_to_other(self):
@@ -144,10 +143,10 @@ class HALProtocolTest(ProtocolTest):
         # the user is presented with initial data
         args = self.proto.get_form_initial_data()
         # they fill the form with an invalid topic
-        form_fields = {'abstract':'here is my great result',
-             'topic':'OTHER',
-             'depositing_author':0,
-             'affiliation':128940}
+        form_fields = {'abstract': 'here is my great result',
+                       'topic': 'OTHER',
+                       'depositing_author': 0,
+                       'affiliation': 128940}
         args.update(form_fields)
 
         # the form should reject the "OTHER" topic
@@ -161,10 +160,10 @@ class HALProtocolTest(ProtocolTest):
         p = Paper.create_by_doi('10.1007/s00268-016-3429-x')
         p.authors_list = [p.authors_list[0]]
         r = self.dry_deposit(p,
-            abstract='bla ble bli blo blu',
-            topic='SDV',
-            depositing_author=0,
-            affiliation=128940)
+                             abstract='bla ble bli blo blu',
+                             topic='SDV',
+                             depositing_author=0,
+                             affiliation=128940)
         self.assertEqualOrLog(r.status, 'faked')
 
     def test_preprint(self):
@@ -173,13 +172,14 @@ class HALProtocolTest(ProtocolTest):
         """
         oai = OaiPaperSource(endpoint='http://doai.io/oai')
         oai.add_translator(BASEDCTranslator())
-        p = oai.create_paper_by_identifier('ftarxivpreprints:oai:arXiv.org:1207.2079', 'base_dc')
+        p = oai.create_paper_by_identifier(
+            'ftarxivpreprints:oai:arXiv.org:1207.2079', 'base_dc')
         p.authors_list = [p.authors_list[0]]
         r = self.dry_deposit(p,
-             abstract='here is my great result',
-             topic='SDV',
-             depositing_author=0,
-             affiliation=128940)
+                             abstract='here is my great result',
+                             topic='SDV',
+                             depositing_author=0,
+                             affiliation=128940)
         self.assertEqualOrLog(r.status, 'faked')
 
     def test_bad_journal_article(self):
@@ -197,10 +197,10 @@ class HALProtocolTest(ProtocolTest):
         p.doctype = 'journal-article'
         p.save()
         r = self.dry_deposit(p,
-            abstract='hey you, yes you',
-            topic='SDV',
-            depositing_author=0,
-            affiliation=128940)
+                             abstract='hey you, yes you',
+                             topic='SDV',
+                             depositing_author=0,
+                             affiliation=128940)
         self.assertEqualOrLog(r.status, 'faked')
 
     def test_paper_already_in_hal(self):
@@ -211,10 +211,10 @@ class HALProtocolTest(ProtocolTest):
 
     def test_predict_topic(self):
         cases = [
-                ('IBEX: Harvesting Entities from the Web Using Unique Identifiers', 'INFO'),
-                ('Global climate change entails many threats and challenges for the majority of crops.', 'SDV'),
-                ('', None),
-            ]
+            ('IBEX: Harvesting Entities from the Web Using Unique Identifiers', 'INFO'),
+            ('Global climate change entails many threats and challenges for the majority of crops.', 'SDV'),
+            ('', None),
+        ]
         for text, topic in cases:
             self.assertEqual(self.proto.predict_topic(text), topic)
 
@@ -225,37 +225,37 @@ class HALProtocolTest(ProtocolTest):
         # First, fake the deposition of a paper
         p = Paper.create_by_doi('10.1109/lics.2015.37')
         r = OaiRecord.new(source=self.repo.oaisource,
-                        identifier='deposition:1:'+hal_id,
-                        splash_url='https://hal-preprod.archives-ouvertes.fr/'+hal_id,
-                        pdf_url=None,
-                        about=p)
+                          identifier='deposition:1:' + hal_id,
+                          splash_url='https://hal-preprod.archives-ouvertes.fr/' + hal_id,
+                          pdf_url=None,
+                          about=p)
         f = UploadedPDF.objects.create(
-                user=self.user,
-                orig_name='File.pdf',
-                file='mediatest/blank.pdf',
-                thumbnail='my_thumbnail.png')
+            user=self.user,
+            orig_name='File.pdf',
+            file='mediatest/blank.pdf',
+            thumbnail='my_thumbnail.png')
         d = DepositRecord.objects.create(
-                paper=p,
-                oairecord=r,
-                repository=self.repo,
-                user=self.user,
-                status='pending',
-                identifier=hal_id,
-                upload_type='postprint',
-                file=f)
+            paper=p,
+            oairecord=r,
+            repository=self.repo,
+            user=self.user,
+            status='pending',
+            identifier=hal_id,
+            upload_type='postprint',
+            file=f)
         self.proto.refresh_deposit_status(d)
         self.assertEqual(d.status, 'published')
         self.assertTrue(r.pdf_url)
 
     def test_get_new_status(self):
         cases = {
-            'hal-01038347':'published',
-            'hal-01038374':'deleted',
-            'hal-01038950':'pending',
+            'hal-01038347': 'published',
+            'hal-01038374': 'deleted',
+            'hal-01038950': 'pending',
         }
         for identifier in cases:
             self.assertEqual(self.proto.get_new_status(identifier),
-                            cases[identifier])
+                             cases[identifier])
 
     def test_paper_already_in_hal_but_not_in_dissemin(self):
         """
@@ -273,10 +273,10 @@ class HALProtocolTest(ProtocolTest):
         p.authors_list = [p.authors_list[0]]
 
         r = self.dry_deposit(p,
-            abstract='this is an abstract',
-            topic='INFO',
-            depositing_author=0,
-            affiliation=59704) # ENS
+                             abstract='this is an abstract',
+                             topic='INFO',
+                             depositing_author=0,
+                             affiliation=59704)  # ENS
 
         # Deposit fails: a duplicate is found
         self.assertEqualOrLog(r.status, 'failed')
@@ -296,10 +296,8 @@ class HALProtocolTest(ProtocolTest):
         p = Paper.create_by_doi('10.1007/978-3-662-47666-6_5')
         p.authors_list = [p.authors_list[0]]
         r = self.dry_deposit(p,
-            abstract='this is an abstract',
-            topic='INFO',
-            depositing_author=0,
-            affiliation=59704) # ENS
+                             abstract='this is an abstract',
+                             topic='INFO',
+                             depositing_author=0,
+                             affiliation=59704)  # ENS
         self.assertEqualOrLog(r.status, 'faked')
-
-

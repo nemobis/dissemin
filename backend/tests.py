@@ -212,17 +212,17 @@ class OrcidUnitTest(unittest.TestCase):
 
     def test_affiliate_author(self):
         self.assertEqual(
-                affiliate_author_with_orcid(
-                    ('Jordi', 'Cortadella'),
-                    '0000-0001-8114-250X',
-                    [('N.', 'Nikitin'), ('J.', 'De San Pedro'), ('J.', 'Carmona'), ('J.', 'Cortadella')]),
-                [None, None, None, '0000-0001-8114-250X'])
+            affiliate_author_with_orcid(
+                ('Jordi', 'Cortadella'),
+                '0000-0001-8114-250X',
+                [('N.', 'Nikitin'), ('J.', 'De San Pedro'), ('J.', 'Carmona'), ('J.', 'Cortadella')]),
+            [None, None, None, '0000-0001-8114-250X'])
         self.assertEqual(
-                affiliate_author_with_orcid(
-                    ('Antonin', 'Delpeuch'),
-                    '0000-0002-8612-8827',
-                    [('Antonin', 'Delpeuch'), ('Anne', 'Preller')]),
-                ['0000-0002-8612-8827', None])
+            affiliate_author_with_orcid(
+                ('Antonin', 'Delpeuch'),
+                '0000-0002-8612-8827',
+                [('Antonin', 'Delpeuch'), ('Anne', 'Preller')]),
+            ['0000-0002-8612-8827', None])
 
 
 class OrcidIntegrationTest(PaperSourceTest):
@@ -277,7 +277,9 @@ class OrcidIntegrationTest(PaperSourceTest):
             for a in p.authors:
                 print a.name.__repr__().encode('utf-8')
                 print a.orcid
-        self.assertTrue('Company-Coq: Taking Proof General one step closer to a real IDE' in titles)
+        self.assertTrue(
+            'Company-Coq: Taking Proof General one step closer to a real IDE' in titles)
+
 
 class PaperMethodsTest(PrefilledTest):
 
@@ -289,7 +291,7 @@ class PaperMethodsTest(PrefilledTest):
                 ([('L. F.', 'Jullien'), ('A.', 'Amarilli')],
                  [('Ludovic', 'Jullien'), ('R.', 'Pérand'), ('Antoine', 'Amarilli')],
                  [('Ludovic F.', 'Jullien'), ('R.', 'Pérand'), ('Antoine', 'Amarilli')]),
-                ]:
+        ]:
             paper = Paper.get_or_create('This is a test paper',
                                         [BareName.create_bare(f, l) for (
                                             f, l) in old_author_names],

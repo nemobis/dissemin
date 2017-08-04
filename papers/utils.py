@@ -35,6 +35,7 @@ filter_punctuation_alphanum_regex = re.compile(r'.*\w')
 
 year_margin = 3
 
+
 def filter_punctuation(lst):
     """
     :param lst: list of strings
@@ -43,7 +44,7 @@ def filter_punctuation(lst):
     >>> filter_punctuation([u'abc',u'ab.',u'/,',u'a-b',u'#=', u'0'])
     [u'abc', u'ab.', u'a-b', u'0']
     """
-    return [ c for c in lst if filter_punctuation_alphanum_regex.match(c) is not None ]
+    return [c for c in lst if filter_punctuation_alphanum_regex.match(c) is not None]
 
 
 def nocomma(lst):
@@ -170,6 +171,7 @@ def maybe_recapitalize_title(title):
 
 # HTML sanitizing for the title
 
+
 overescaped_re = re.compile(r'&amp;#(\d+);')
 unicode4_re = re.compile(r'(\\u[0-9A-Z]{4})(?![0-9A-Z])')
 whitespace_re = re.compile(r'\s+')
@@ -201,6 +203,7 @@ def remove_latex_math_dollars(string):
     """
     return latexmath_re.sub(r'\1', string)
 
+
 latex_command_re = re.compile(
     r'(?P<command>\\([a-zA-Z]+|[.=\'\`"])({[^}]*})*)(?P<letter>[a-zA-Z])?')
 
@@ -231,6 +234,7 @@ def unescape_latex(s):
             return rep + letter
 
     return latex_command_re.sub(conditional_replace, s)
+
 
 latex_one_character_braces_re = re.compile(
     r'(^|(^|[^\\])\b(\w+)){(.)}', re.UNICODE)
@@ -280,10 +284,10 @@ def sanitize_html(s):
     s = whitespace_re.sub(r' ', s)
     s = unescape_latex(s)
     s = kill_double_dollars(s)
-    if ltgt_re.match(s): # only run HTML sanitizer if there is a
+    if ltgt_re.match(s):  # only run HTML sanitizer if there is a
                          # '<', '>' or '&'
-        orig = html_cleaner.clean_html('<span>'+s+'</span>')
-        s = orig[6:-7] # We cut the <span />
+        orig = html_cleaner.clean_html('<span>' + s + '</span>')
+        s = orig[6:-7]  # We cut the <span />
     return s
 
 
@@ -295,11 +299,12 @@ def kill_html(s):
     >>> kill_html('My title<sub>is</sub><a href="http://dissem.in"><sup>nice</sup>    </a>')
     u'My titleisnice'
     """
-    if ltgt_re.match(s): # only run HTML sanitizer if there is a '<' or '>'
-        orig = html_killer.clean_html('<div>'+s+'</div>')
+    if ltgt_re.match(s):  # only run HTML sanitizer if there is a '<' or '>'
+        orig = html_killer.clean_html('<div>' + s + '</div>')
         return orig[5:-6].strip()  # We cut the <div />
     else:
         return s
+
 
 latex_double_dollar_re = re.compile(r'\$\$([^\$]*?)\$\$')
 
@@ -331,10 +336,12 @@ def urlize(val):
     u'https://gnu.org'
     """
     if val and not val.startswith('http://') and not val.startswith('https://'):
-        val = 'http://'+val
+        val = 'http://' + val
     return val
 
+
 domain_re = re.compile(r'\s*(https?|ftp)://(([a-zA-Z0-9-_]+\.)+[a-zA-Z]+)/?')
+
 
 def extract_domain(url):
     """
@@ -348,7 +355,6 @@ def extract_domain(url):
     match = domain_re.match(url)
     if match:
         return match.group(2)
-
 
 
 # JSON utilities !
@@ -387,7 +393,7 @@ def remove_nones(dct):
     >>> remove_nones({None:1})
     {None: 1}
     """
-    return dict((k,v) for k,v in  dct.items() if v is not None)
+    return dict((k, v) for k, v in dct.items() if v is not None)
 
 # Partial date representation
 
@@ -483,7 +489,7 @@ def tolerant_datestamp_to_datetime(datestamp):
         d, t = splitted
         # if no Z is present, raise error
         if not t.endswith('Z'):
-            raise ValueError("Invalid datestamp: "+str(datestamp))
+            raise ValueError("Invalid datestamp: " + str(datestamp))
         # split off Z at the end
         t = t[:-1]
     else:
@@ -502,17 +508,17 @@ def tolerant_datestamp_to_datetime(datestamp):
         MM = '01'
         DD = '01'
     else:
-        raise ValueError("Invalid datestamp: "+str(datestamp))
+        raise ValueError("Invalid datestamp: " + str(datestamp))
     if (len(YYYY) != 4 or
             len(MM) > 2 or
             len(DD) > 2):
-        raise ValueError("Invalid datestamp: "+str(datestamp))
+        raise ValueError("Invalid datestamp: " + str(datestamp))
 
     t_splitted = t.split(':')
     if len(t_splitted) == 3:
         hh, mm, ss = t_splitted
     else:
-        raise ValueError("Invalid datestamp: "+str(datestamp))
+        raise ValueError("Invalid datestamp: " + str(datestamp))
     return datetime.datetime(
         int(YYYY), int(MM), int(DD), int(hh), int(mm), int(ss))
 
@@ -552,6 +558,7 @@ def valid_publication_date(dt):
             and dt.year < current_year + year_margin)
 
 ### ORCiD utilities ###
+
 
 orcid_re = re.compile(
     r'^(https?://(sandbox.)?orcid.org/)?([0-9]{4}-[0-9]{4}-[0-9]{4}-[0-9]{3}[X0-9])$')

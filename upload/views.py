@@ -78,7 +78,7 @@ def make_thumbnail(pdf_blob):
     or None if anything failed.
     """
     try:
-        resolution = int(THUMBNAIL_MAX_WIDTH / (21/2.54))+1
+        resolution = int(THUMBNAIL_MAX_WIDTH / (21 / 2.54)) + 1
         num_pages = None
 
         try:  # We try to extract the first page of the PDF
@@ -97,7 +97,7 @@ def make_thumbnail(pdf_blob):
             # We try to convert the file with ImageMagick (wand) anyway,
             # rendering the whole PDF as we have not been able to
             # select the first page
-            print "PyPDF error: "+str(e)
+            print "PyPDF error: " + str(e)
 
         # We render the PDF (or only its first page if we succeeded to extract
         # it)
@@ -130,9 +130,9 @@ def make_thumbnail(pdf_blob):
             return (num_pages, image.make_blob())
     except wand.exceptions.WandException as e:
         # Wand failed: we consider the PDF file as invalid
-        print "Wand exception: "+unicode(e)
+        print "Wand exception: " + unicode(e)
     except ValueError as e:
-        print "ValueError: "+unicode(e)
+        print "ValueError: " + unicode(e)
 
 
 def save_pdf(user, orig_name, pdf_blob):
@@ -154,9 +154,9 @@ def save_pdf(user, orig_name, pdf_blob):
 
     # Otherwise we save the file!
     upload = UploadedPDF(
-            user=user,
-            num_pages=num_pages,
-            orig_name=orig_name[:MAX_ORIG_NAME_LENGTH])
+        user=user,
+        num_pages=num_pages,
+        orig_name=orig_name[:MAX_ORIG_NAME_LENGTH])
     f = ContentFile(pdf_blob)
     thumbnail_file = ContentFile(png_blob)
     upload.file.save('document.pdf', f)
@@ -164,12 +164,12 @@ def save_pdf(user, orig_name, pdf_blob):
     upload.save()
 
     response = {
-            'status': 'success',
-            'size': len(pdf_blob),
-            'num_pages': num_pages,
-            'thumbnail': upload.thumbnail.url,
-            'file_id': upload.id,
-            }
+        'status': 'success',
+        'size': len(pdf_blob),
+        'num_pages': num_pages,
+        'thumbnail': upload.thumbnail.url,
+        'file_id': upload.id,
+    }
     return response
 
 
@@ -187,7 +187,7 @@ def handleUrlDownload(request):
         r = requests.get(form.cleaned_data[
                          'url'], timeout=URL_DEPOSIT_DOWNLOAD_TIMEOUT, stream=True)
         r.raise_for_status()
-        content = r.raw.read(DEPOSIT_MAX_FILE_SIZE+1, decode_content=False)
+        content = r.raw.read(DEPOSIT_MAX_FILE_SIZE + 1, decode_content=False)
 
         if len(content) > DEPOSIT_MAX_FILE_SIZE:
             response['message'] = _('File too large.')
@@ -198,7 +198,8 @@ def handleUrlDownload(request):
                 _('Invalid content type: this link points to a web page, we need a direct link to a PDF file.'))
 
     except requests.exceptions.SSLError:
-        response['message'] = _('Invalid SSL certificate on the remote server.')
+        response['message'] = _(
+            'Invalid SSL certificate on the remote server.')
     except requests.exceptions.Timeout:
         response['message'] = _('Invalid URL (server timed out).')
     except requests.exceptions.RequestException:

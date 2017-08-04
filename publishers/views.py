@@ -46,7 +46,7 @@ def varyQueryArguments(key, args, possibleValues):
             queryargs[key] = s[0]
         else:
             queryargs.pop(key)
-        variants.append(s+(queryargs,))
+        variants.append(s + (queryargs,))
     return variants
 
 
@@ -84,9 +84,8 @@ class PublishersView(SearchView):
         """
         args = super(PublishersView, self).get_form_kwargs()
         if 'data' not in args:
-            args['data'] = {self.search_field:''}
+            args['data'] = {self.search_field: ''}
         return args
-
 
     def get_context_data(self, **kwargs):
         context = super(PublishersView, self).get_context_data(**kwargs)

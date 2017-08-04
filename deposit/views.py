@@ -73,7 +73,7 @@ def get_metadata_form(request):
 def start_view(request, pk):
     paper = get_object_or_404(Paper, pk=pk)
     repositories = get_all_repositories_and_protocols(paper, request.user)
-    repositories_protocol = {repo.id :proto for repo, proto in repositories}
+    repositories_protocol = {repo.id: proto for repo, proto in repositories}
 
     # select the most appropriate repository
     selected_repository = None
@@ -102,15 +102,15 @@ def start_view(request, pk):
     breadcrumbs = paper.breadcrumbs()
     breadcrumbs.append((_('Deposit'), ''))
     context = {
-            'paper': paper,
-            'max_file_size': DEPOSIT_MAX_FILE_SIZE,
-            'available_repositories': repositories,
-            'selected_repository': selected_repository,
-            'selected_protocol': selected_protocol,
-            'is_owner': paper.is_owned_by(request.user, flexible=True),
-            'breadcrumbs': breadcrumbs,
-            'repositoryForm': None,
-            }
+        'paper': paper,
+        'max_file_size': DEPOSIT_MAX_FILE_SIZE,
+        'available_repositories': repositories,
+        'selected_repository': selected_repository,
+        'selected_protocol': selected_protocol,
+        'is_owner': paper.is_owned_by(request.user, flexible=True),
+        'breadcrumbs': breadcrumbs,
+        'repositoryForm': None,
+    }
     if request.GET.get('type') not in [None, 'preprint', 'postprint', 'pdfversion']:
         return HttpResponseForbidden()
     return render(request, 'deposit/start.html', context)
@@ -119,11 +119,12 @@ def start_view(request, pk):
 @user_passes_test(is_authenticated)
 def list_deposits(request):
     deposits = DepositRecord.objects.filter(user=request.user,
-    identifier__isnull=False).order_by('-date')
+                                            identifier__isnull=False).order_by('-date')
     context = {
         'deposits': deposits
     }
     return render(request, 'deposit/deposits.html', context)
+
 
 @user_passes_test(is_authenticated)
 def edit_repo_preferences(request, pk):
@@ -146,6 +147,7 @@ def edit_repo_preferences(request, pk):
 
     context['preferences_form'] = pref_form
     return render(request, 'deposit/repo_preferences.html', context)
+
 
 @user_passes_test(is_authenticated)
 def edit_global_preferences(request):
@@ -209,11 +211,11 @@ def submitDeposit(request, pk):
 
     # Create initial record
     d = DepositRecord(
-            paper=paper,
-            user=pdf.user,
-            repository=repository,
-            upload_type=form.cleaned_data['radioUploadType'],
-            file=pdf)
+        paper=paper,
+        user=pdf.user,
+        repository=repository,
+        upload_type=form.cleaned_data['radioUploadType'],
+        file=pdf)
     d.save()
 
     submitResult = protocol.submit_deposit_wrapper(path, repositoryForm)

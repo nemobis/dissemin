@@ -5,6 +5,7 @@ from __future__ import unicode_literals
 from django.db import migrations, models
 import django.db.models.deletion
 
+
 def populate_institutions(apps, se):
     Researcher = apps.get_model('papers', 'Researcher')
     for r in Researcher.objects.all():
@@ -12,8 +13,10 @@ def populate_institutions(apps, se):
             r.institution_id = r.department.institution_id
             r.save()
 
+
 def backwards(apps, se):
     pass
+
 
 class Migration(migrations.Migration):
 
@@ -30,7 +33,8 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='researcher',
             name='institution',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='papers.Institution'),
+            field=models.ForeignKey(
+                null=True, on_delete=django.db.models.deletion.CASCADE, to='papers.Institution'),
         ),
         migrations.RunPython(populate_institutions, backwards),
     ]

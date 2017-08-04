@@ -49,7 +49,7 @@ class StatisticsTest(PrefilledTest):
 
     def test_from_queryset(self):
         bare_stats = BareAccessStatistics.from_queryset(
-                Paper.objects.filter(authors_list__contains=[{'researcher_id': self.r2.id}]).distinct())
+            Paper.objects.filter(authors_list__contains=[{'researcher_id': self.r2.id}]).distinct())
         stats = self.r2.stats
         self.assertEqual(bare_stats.num_oa, stats.num_oa)
         self.assertEqual(bare_stats.num_ok, stats.num_ok)

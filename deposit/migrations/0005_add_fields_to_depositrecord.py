@@ -16,7 +16,8 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='depositrecord',
             name='additional_info',
-            field=django.contrib.postgres.fields.jsonb.JSONField(blank=True, null=True),
+            field=django.contrib.postgres.fields.jsonb.JSONField(
+                blank=True, null=True),
         ),
         migrations.AddField(
             model_name='depositrecord',
@@ -26,6 +27,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='depositrecord',
             name='upload_type',
-            field=models.CharField(choices=[('preprint', 'Preprint'), ('postprint', 'Postprint'), ('pdfversion', 'Published version')], max_length=64),
+            field=models.CharField(choices=[('preprint', 'Preprint'), (
+                'postprint', 'Postprint'), ('pdfversion', 'Published version')], max_length=64),
         ),
     ]

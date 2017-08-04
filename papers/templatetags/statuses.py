@@ -45,7 +45,7 @@ def explain_policy(status, arg):
         ("restricted", "pdfversion"): _('Under the restrictions below, final versions can be archived.'),
         ("unclear", "pdfversion"): _('Final version archiving policy unclear.'),
         ("unknown", "pdfversion"): _('Final version archiving policy unknown.'),
-        }
+    }
     return mark_safe(explanations.get((status, arg), _("Unknown policy")))
 
 
@@ -57,7 +57,7 @@ def explain_policy_short(status):
         ("restricted"): _('archiving restricted:'),
         ("unclear"): _('policy unclear.'),
         ("unknown"): _('policy unknown.'),
-        }
+    }
     return mark_safe(explanations.get((status), _("policy unknown.")))
 
 
@@ -69,7 +69,7 @@ def explain_policy_short_no_punc(status):
         ("restricted"): _('archiving restricted'),
         ("unclear"): _('policy unclear'),
         ("unknown"): _('policy unknown'),
-        }
+    }
     return mark_safe(explanations.get((status), _("policy unknown.")))
 
 

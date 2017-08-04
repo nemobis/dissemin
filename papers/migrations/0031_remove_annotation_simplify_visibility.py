@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 
 from django.db import migrations, models
 
+
 def init_visible(apps, schema_editor):
     Paper = apps.get_model('papers', 'Paper')
 
@@ -11,6 +12,7 @@ def init_visible(apps, schema_editor):
         p.update_visible()
         if not p.visible:
             p.save(update_fields=['visible'])
+
 
 def do_nothing(apps, schema_editor):
     pass

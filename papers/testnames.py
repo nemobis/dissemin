@@ -47,7 +47,8 @@ class MatchNamesTest(unittest.TestCase):
 
     def test_reverse_order(self):
         self.assertTrue(match_names(('R. J.', 'Ryder'), ('J.', 'Ryder')))
-        self.assertTrue(match_names(('W. T.', 'Gowers'), ('Timothy', 'Gowers')))
+        self.assertTrue(match_names(
+            ('W. T.', 'Gowers'), ('Timothy', 'Gowers')))
 
     def test_middle_initial(self):
         self.assertFalse(match_names(
@@ -160,22 +161,22 @@ class NormalizeNameWordsTest(unittest.TestCase):
 
     def test_involutive(self):
         lst = [
-                'Jean',
-                'Jean-Pierre',
-                'John Mark',
-                'JEAN-PIERRE',
-                'JOHN MARK',
-                'JOSÉ',
-                'JOSÉ-ALAIN',
-                'José',
-                'ÉMILIE',
-                'Émilie',
-                'John  Mark',
-                'Jean - Pierre',
-                'J.P. Morgan',
-                'JP. Morgan',
-                'Jp. Morgan',
-              ]
+            'Jean',
+            'Jean-Pierre',
+            'John Mark',
+            'JEAN-PIERRE',
+            'JOHN MARK',
+            'JOSÉ',
+            'JOSÉ-ALAIN',
+            'José',
+            'ÉMILIE',
+            'Émilie',
+            'John  Mark',
+            'Jean - Pierre',
+            'J.P. Morgan',
+            'JP. Morgan',
+            'Jp. Morgan',
+        ]
         for sample in lst:
             normalized = normalize_name_words(sample)
             self.assertEqual(normalized, normalize_name_words(normalized))
@@ -207,35 +208,35 @@ class NameSimilarityTest(unittest.TestCase):
 
     def test_matching(self):
         self.assertAlmostEqual(
-                name_similarity(('Robin', 'Ryder'), ('Robin', 'Ryder')), 0.8)
+            name_similarity(('Robin', 'Ryder'), ('Robin', 'Ryder')), 0.8)
         self.assertAlmostEqual(
-                name_similarity(('Robin', 'Ryder'), ('R.', 'Ryder')), 0.4)
+            name_similarity(('Robin', 'Ryder'), ('R.', 'Ryder')), 0.4)
         self.assertAlmostEqual(
-                name_similarity(('R.', 'Ryder'), ('R.', 'Ryder')), 0.4)
+            name_similarity(('R.', 'Ryder'), ('R.', 'Ryder')), 0.4)
         self.assertAlmostEqual(
-                name_similarity(('Robin J.', 'Ryder'), ('R.', 'Ryder')), 0.3)
+            name_similarity(('Robin J.', 'Ryder'), ('R.', 'Ryder')), 0.3)
         self.assertAlmostEqual(
-                name_similarity(('Robin J.', 'Ryder'), ('R. J.', 'Ryder')), 0.8)
+            name_similarity(('Robin J.', 'Ryder'), ('R. J.', 'Ryder')), 0.8)
         self.assertAlmostEqual(
-                name_similarity(('R. J.', 'Ryder'), ('J.', 'Ryder')), 0.3)
+            name_similarity(('R. J.', 'Ryder'), ('J.', 'Ryder')), 0.3)
         self.assertAlmostEqual(
-                name_similarity(('Robin', 'Ryder'), ('Robin J.', 'Ryder')), 0.7)
+            name_similarity(('Robin', 'Ryder'), ('Robin J.', 'Ryder')), 0.7)
 
     def test_multiple(self):
         self.assertAlmostEqual(
-                name_similarity(('Juan Pablo', 'Corella'), ('J. Pablo', 'Corella')), 1.0)
+            name_similarity(('Juan Pablo', 'Corella'), ('J. Pablo', 'Corella')), 1.0)
 
     def test_reverse(self):
         self.assertAlmostEqual(
-                name_similarity(('W. Timothy', 'Gowers'), ('Timothy', 'Gowers')), 0.7)
+            name_similarity(('W. Timothy', 'Gowers'), ('Timothy', 'Gowers')), 0.7)
 
     def test_mismatch(self):
         self.assertAlmostEqual(
-                name_similarity(('Robin K.', 'Ryder'), ('Robin J.', 'Ryder')), 0)
+            name_similarity(('Robin K.', 'Ryder'), ('Robin J.', 'Ryder')), 0)
         self.assertAlmostEqual(
-                name_similarity(('Claire', 'Mathieu'), ('Claire', 'Kenyon-Mathieu')), 0)
+            name_similarity(('Claire', 'Mathieu'), ('Claire', 'Kenyon-Mathieu')), 0)
         self.assertAlmostEqual(
-                name_similarity(('Amanda P.', 'Brown'), ('Patrick', 'Brown')), 0)
+            name_similarity(('Amanda P.', 'Brown'), ('Patrick', 'Brown')), 0)
 
     def test_symmetric(self):
         pairs = [
@@ -251,7 +252,8 @@ class NameSimilarityTest(unittest.TestCase):
             (('Claire', 'Mathieu'), ('Claire', 'Kenyon-Mathieu')),
         ]
         for a, b in pairs:
-            self.assertAlmostEqual(name_similarity(a, b), name_similarity(b, a))
+            self.assertAlmostEqual(name_similarity(a, b),
+                                   name_similarity(b, a))
 
 
 class ShallowerNameSimilarityTest(unittest.TestCase):
@@ -282,13 +284,13 @@ class ShallowerNameSimilarityTest(unittest.TestCase):
 
     def test_reverse(self):
         self.assertGreater(
-                shallower_name_similarity(('W. Timothy', 'Gowers'), ('Timothy', 'Gowers')), 0)
+            shallower_name_similarity(('W. Timothy', 'Gowers'), ('Timothy', 'Gowers')), 0)
 
     def test_mismatch(self):
         self.assertAlmostEqual(
-                shallower_name_similarity(('Robin K.', 'Ryder'), ('Robin J.', 'Ryder')), 0)
+            shallower_name_similarity(('Robin K.', 'Ryder'), ('Robin J.', 'Ryder')), 0)
         self.assertAlmostEqual(
-                shallower_name_similarity(('Robin', 'Ryder'), ('Robin', 'Rider')), 0)
+            shallower_name_similarity(('Robin', 'Ryder'), ('Robin', 'Rider')), 0)
 
     def test_symmetric(self):
         pairs = [
@@ -312,15 +314,16 @@ class ShallowerNameSimilarityTest(unittest.TestCase):
             (('  ', '  '), ('John', 'Doe')),
             (('Alfred', 'Kastler'), ('    ', '    ')),
             ('', (None, '')),
-            ]
+        ]
         for a, b in inputs:
             self.assertEqual(shallower_name_similarity(a, b), False)
 
     def test_hyphen(self):
         self.assertGreater(
             shallower_name_similarity(('Clement F.', 'Pit Claudel'),
-                                       ('Clément', u'Pit-Claudel')),
-                                        0)
+                                      ('Clément', u'Pit-Claudel')),
+            0)
+
 
 class ParseCommaNameTest(unittest.TestCase):
 
@@ -349,7 +352,8 @@ class ParseCommaNameTest(unittest.TestCase):
 
     def test_final_initials(self):
         self.assertEqual(parse_comma_name('Mathieu C.'), ('C.', 'Mathieu'))
-        self.assertEqual(parse_comma_name('Gowers W. T..'), ('W. T.', 'Gowers'))
+        self.assertEqual(parse_comma_name(
+            'Gowers W. T..'), ('W. T.', 'Gowers'))
 
     def test_middle_initials(self):
         self.assertEqual(parse_comma_name(
@@ -393,7 +397,7 @@ class NameUnificationTest(unittest.TestCase):
         # should be ('Clément F.', 'Pit-Claudel') but it is currently
         # ('Clement F.', 'Pit Claudel') which is still fine.
         self.assertTrue(name_unification(('Clement F.', 'Pit Claudel'),
-                                            ('Clément', u'Pit-Claudel')))
+                                         ('Clément', u'Pit-Claudel')))
 
     def test_uncommon_order(self):
         self.assertEqual(name_unification(('W. T.', 'Gowers'),
@@ -489,9 +493,9 @@ class UnifyNameListsTest(unittest.TestCase):
             [('Jean', 'Dupont'), ('Marie', 'Dupont')],
             [('M.', 'Dupont'), ('J. P.', 'Dupont')]) in
             [
-                 [(('Jean P.', 'Dupont'), (0, 1)), (('Marie', 'Dupont'), (1, 0))],
-                 [(('Marie', 'Dupont'), (1, 0)), (('Jean P.', 'Dupont'), (0, 1))]
-            ])
+            [(('Jean P.', 'Dupont'), (0, 1)), (('Marie', 'Dupont'), (1, 0))],
+            [(('Marie', 'Dupont'), (1, 0)), (('Jean P.', 'Dupont'), (0, 1))]
+        ])
 
     def test_dirty_input(self):
         self.assertEqual(unify_name_lists(
@@ -509,7 +513,7 @@ class UnifyNameListsTest(unittest.TestCase):
         self.assertEqual(unify_name_lists(
             [('Clement F.', 'Pit Claudel')],
             [('Clément', u'Pit-Claudel')])[0][1],
-            (0,0))
+            (0, 0))
 
     def test_inverted(self):
         # in the wild:

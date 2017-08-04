@@ -60,17 +60,18 @@ def init_profile_from_orcid(pk):
     can see their ORCID publications quickly.
     """
     r = Researcher.objects.get(pk=pk)
-    update_task = lambda name: update_researcher_task(r, name)
+
+    def update_task(name): return update_researcher_task(r, name)
     update_task('clustering')
     fetch_everything_for_researcher(pk)
 
 
 @shared_task(name='fetch_everything_for_researcher')
-@run_only_once('researcher', keys=['pk'], timeout=15*60)
+@run_only_once('researcher', keys=['pk'], timeout=15 * 60)
 def fetch_everything_for_researcher(pk):
     sources = [
         ('orcid', OrcidPaperSource(max_results=1000)),
-       ]
+    ]
     r = Researcher.objects.get(pk=pk)
 
     # If it is the first time we fetch this researcher
@@ -101,7 +102,7 @@ def change_publisher_oa_status(pk, status):
 
 
 @shared_task(name='consolidate_paper')
-@run_only_once('consolidate_paper', keys=['pk'], timeout=1*60)
+@run_only_once('consolidate_paper', keys=['pk'], timeout=1 * 60)
 def consolidate_paper(pk):
     p = None
     try:
@@ -116,7 +117,7 @@ def consolidate_paper(pk):
 
 
 @shared_task(name='update_all_stats')
-@run_only_once('refresh_stats', timeout=3*60)
+@run_only_once('refresh_stats', timeout=3 * 60)
 def update_all_stats():
     """
     Updates the stats for every model using them
@@ -125,18 +126,15 @@ def update_all_stats():
     AccessStatistics.update_all_stats(Publisher)
     AccessStatistics.update_all_stats(Journal)
     AccessStatistics.update_all_stats(Institution)
-    #AccessStatistics.update_all_stats(Researcher)
-    #AccessStatistics.update_all_stats(Department)
-
+    # AccessStatistics.update_all_stats(Researcher)
+    # AccessStatistics.update_all_stats(Department)
 
 
 @shared_task(name='update_journal_stats')
-@run_only_once('refresh_journal_stats', timeout=10*60)
+@run_only_once('refresh_journal_stats', timeout=10 * 60)
 def update_journal_stats():
     """
     Updates statistics for journals (only visible to admins, so
     not too frequently please)
     """
     AccessStatistics.update_all_stats(Journal)
-
-

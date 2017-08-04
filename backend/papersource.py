@@ -96,4 +96,3 @@ class PaperSource(object):
         if val != researcher.empty_orcid_profile:
             researcher.empty_orcid_profile = val
             researcher.save(update_fields=['empty_orcid_profile'])
-

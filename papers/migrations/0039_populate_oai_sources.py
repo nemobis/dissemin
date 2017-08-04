@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 from django.db import migrations
 
+
 def populate_oai_sources(apps, schema_editor):
     OaiSource = apps.get_model('papers', 'OaiSource')
 
@@ -19,7 +20,7 @@ def populate_oai_sources(apps, schema_editor):
         ('researchgate', 'ResearchGate', False, -10, 'journal-article'),
         ('crossref', 'Crossref', False, 20, 'journal-article'),
         ('orcid', 'ORCID', False, 1, 'other'),
-        ]
+    ]
 
     # Auto-create all the Oai Sources when this module is imported
     for identifier, name, oa, priority, pubtype in oai_sources:
@@ -29,6 +30,7 @@ def populate_oai_sources(apps, schema_editor):
                       'oa': oa,
                       'priority': priority,
                       'default_pubtype': pubtype})
+
 
 def do_nothing(apps, schema_editor):
     pass
@@ -43,5 +45,3 @@ class Migration(migrations.Migration):
     operations = [
         migrations.RunPython(populate_oai_sources, do_nothing)
     ]
-
-

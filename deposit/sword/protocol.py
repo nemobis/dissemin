@@ -69,9 +69,9 @@ class SwordProtocol(RepositoryProtocol):
             entry.add_field('dcterms_abstract', p.abstract)
         entry.add_field('dcterms_issued', p.pubdate.isoformat())
         for pub in p.publications:
-            entry.add_field('dcterms_identifier', 'doi:'+pub.doi)
+            entry.add_field('dcterms_identifier', 'doi:' + pub.doi)
             if pub.journal and pub.journal.issn:
-                entry.add_field('dcterms_isPartOf', 'issn:'+pub.journal.issn)
+                entry.add_field('dcterms_isPartOf', 'issn:' + pub.journal.issn)
 
         for rec in p.oairecords:
             entry.add_field('dcterms_source', rec.splash_url)
@@ -91,7 +91,7 @@ class SwordProtocol(RepositoryProtocol):
 
             formatter = DCFormatter()
             meta = formatter.toString(self.paper, 'article.pdf', True,
-xml_declaration=False)
+                                      xml_declaration=False)
             self.log(meta)
 
             self.log("### Submitting metadata")
@@ -120,5 +120,6 @@ xml_declaration=False)
             raise DepositError(__('Failed to connect to the SWORD server.'))
 
         return deposit_result
+
 
 protocol_registry.register(SwordProtocol)

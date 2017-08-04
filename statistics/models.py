@@ -50,7 +50,7 @@ COMBINED_STATUS_CHOICES = [
     ('couldbe', _('Could be shared by the authors')),
     ('unk', _('Unknown/unclear sharing policy')),
     ('closed', _('Publisher forbids sharing')),
-    ]
+]
 
 #: Helptext displayed when a paper logo is hovered
 STATUS_CHOICES_HELPTEXT = {
@@ -59,7 +59,7 @@ STATUS_CHOICES_HELPTEXT = {
     'couldbe': _('This paper was not found in any repository, but could be made available legally by the author.'),
     'unk': _('This paper was not found in any repository; the policy of its publisher is unknown or unclear.'),
     'closed': _('Distributing this paper is prohibited by the publisher'),
-    }
+}
 
 #: Availability status choices
 PDF_STATUS_CHOICES = [('OK', _('Available')),
@@ -74,7 +74,7 @@ STATUS_QUERYSET_FILTER = {
     'couldbe': lambda q: q.filter(pdf_url__isnull=True, oa_status='OK'),
     'unk': lambda q: q.filter(pdf_url__isnull=True, oa_status='UNK'),
     'closed': lambda q: q.filter(pdf_url__isnull=True, oa_status='NOK'),
-    }
+}
 
 
 def combined_status_for_instance(paper):
@@ -142,7 +142,7 @@ class BareAccessStatistics(object):
         stats = cls.new()
         for paper in qs:
             stats.num_tot += 1
-            attrname = 'num_'+paper.combined_status
+            attrname = 'num_' + paper.combined_status
             setattr(stats, attrname, getattr(stats, attrname) + 1)
         return stats
 
@@ -151,16 +151,16 @@ class BareAccessStatistics(object):
         stats = cls.new()
         for status, count in d.iteritems():
             stats.num_tot += count
-            setattr(stats, 'num_'+status, count)
+            setattr(stats, 'num_' + status, count)
         return stats
 
     @classmethod
     def from_search_queryset(cls, qs):
         qs = qs.aggregations({
-         "status": {"terms": {"field": "combined_status_exact"}},
+            "status": {"terms": {"field": "combined_status_exact"}},
         })
         aggregations = qs.get_aggregation_results()
-        status = aggregations.get('status', {'buckets':[]})
+        status = aggregations.get('status', {'buckets': []})
         buckets = {
             bucket['key']: bucket['doc_count']
             for bucket in status['buckets']
@@ -172,14 +172,14 @@ class BareAccessStatistics(object):
         Checks that values are consistent (non-negative and summing up to the total).
         """
         return (
-                self.num_oa >= 0 and
-                self.num_ok >= 0 and
-                self.num_couldbe >= 0 and
-                self.num_unk >= 0 and
-                self.num_closed >= 0 and
-                self.num_oa + self.num_ok + self.num_couldbe +
-                  self.num_unk + self.num_closed == self.num_tot
-                )
+            self.num_oa >= 0 and
+            self.num_ok >= 0 and
+            self.num_couldbe >= 0 and
+            self.num_unk >= 0 and
+            self.num_closed >= 0 and
+            self.num_oa + self.num_ok + self.num_couldbe +
+            self.num_unk + self.num_closed == self.num_tot
+        )
 
     def pie_data(self):
         """
@@ -191,8 +191,8 @@ class BareAccessStatistics(object):
             item = {
                 'id': key,
                 'label': unicode(desc),
-                'value': self.__dict__['num_'+key],
-                }
+                'value': self.__dict__['num_' + key],
+            }
             detailed_data.append(item)
         # Gives the translated label
         aggregated_labels = []
@@ -222,7 +222,7 @@ class BareAccessStatistics(object):
         and whose values are the percentages of these states for the given statistics.
         """
         if self.num_tot:
-            return {key: 100.*self.__dict__['num_'+key]/self.num_tot for key in STATUS_QUERYSET_FILTER}
+            return {key: 100. * self.__dict__['num_' + key] / self.num_tot for key in STATUS_QUERYSET_FILTER}
 
     @property
     def percentage_available(self):
@@ -230,7 +230,7 @@ class BareAccessStatistics(object):
         Percentage of available items
         """
         if self.num_tot:
-            return int(100.*(self.num_oa + self.num_ok)/self.num_tot)
+            return int(100. * (self.num_oa + self.num_ok) / self.num_tot)
 
     @property
     def percentage_unavailable(self):
@@ -238,7 +238,7 @@ class BareAccessStatistics(object):
         Percentage of unavailable items
         """
         if self.num_tot:
-            return int(100.*(self.num_couldbe + self.num_unk + self.num_closed)/self.num_tot)
+            return int(100. * (self.num_couldbe + self.num_unk + self.num_closed) / self.num_tot)
 
 
 class AccessStatistics(models.Model, BareAccessStatistics):
@@ -258,7 +258,7 @@ class AccessStatistics(models.Model, BareAccessStatistics):
         """
         queryset = queryset.filter(visible=True)
         for key, modifier in STATUS_QUERYSET_FILTER.items():
-            self.__dict__['num_'+key] = modifier(queryset).count()
+            self.__dict__['num_' + key] = modifier(queryset).count()
         self.num_tot = queryset.count()
         self.save()
 

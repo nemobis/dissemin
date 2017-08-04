@@ -112,13 +112,13 @@ def is_oa_license(license_url):
     if "creativecommons.org/licenses/" in license_url:
         return True
     oa_licenses = set([
-            "http://koreanjpathol.org/authors/access.php",
-            "http://olabout.wiley.com/WileyCDA/Section/id-815641.html",
-            "http://pubs.acs.org/page/policy/authorchoice_ccby_termsofuse.html",
-            "http://pubs.acs.org/page/policy/authorchoice_ccbyncnd_termsofuse.html",
-            "http://pubs.acs.org/page/policy/authorchoice_termsofuse.html",
-            "http://www.elsevier.com/open-access/userlicense/1.0/",
-            ])
+        "http://koreanjpathol.org/authors/access.php",
+        "http://olabout.wiley.com/WileyCDA/Section/id-815641.html",
+        "http://pubs.acs.org/page/policy/authorchoice_ccby_termsofuse.html",
+        "http://pubs.acs.org/page/policy/authorchoice_ccbyncnd_termsofuse.html",
+        "http://pubs.acs.org/page/policy/authorchoice_termsofuse.html",
+        "http://www.elsevier.com/open-access/userlicense/1.0/",
+    ])
     return license_url in oa_licenses
 
 ####### 1. Generic DOI metadata fetching tools ########
@@ -178,6 +178,7 @@ def get_publication_date(metadata):
     if date is None and 'deposited' in metadata:
         date = parse_crossref_date(metadata['deposited'])
     return date
+
 
 def create_publication(paper, metadata):
     """
@@ -249,21 +250,21 @@ def _create_publication(paper, metadata):
         publisher = fetch_publisher(publisher_name)
 
     barepub = BareOaiRecord(
-            paper=paper,
-            journal_title=title,
-            issue=issue,
-            volume=volume,
-            pubdate=pubdate,
-            pages=pages,
-            doi=doi,
-            pubtype=pubtype,
-            publisher_name=publisher_name,
-            journal=journal,
-            publisher=publisher,
-            pdf_url=pdf_url,
-            splash_url=splash_url,
-            source=OaiSource.objects.get(identifier='crossref'),
-            identifier=doi_to_crossref_identifier(doi))
+        paper=paper,
+        journal_title=title,
+        issue=issue,
+        volume=volume,
+        pubdate=pubdate,
+        pages=pages,
+        doi=doi,
+        pubtype=pubtype,
+        publisher_name=publisher_name,
+        journal=journal,
+        publisher=publisher,
+        pdf_url=pdf_url,
+        splash_url=splash_url,
+        source=OaiSource.objects.get(identifier='crossref'),
+        identifier=doi_to_crossref_identifier(doi))
     rec = paper.add_oairecord(barepub)
     paper.update_availability()
     return paper, rec
@@ -281,7 +282,7 @@ def fetch_metadata_by_DOI(doi):
         return
     addheaders = {'Accept': 'application/citeproc+json'}
     try:
-        request = 'http://'+DOI_PROXY_DOMAIN+'/'+doi
+        request = 'http://' + DOI_PROXY_DOMAIN + '/' + doi
         response = urlopen_retry(request,
                                  timeout=crossref_timeout,
                                  headers=addheaders,
@@ -290,7 +291,7 @@ def fetch_metadata_by_DOI(doi):
         return parsed
     except ValueError as e:
         raise MetadataSourceException('Error while fetching DOI metadata:\nInvalid JSON response.\n' +
-                                      'Error: '+str(e))
+                                      'Error: ' + str(e))
 
 
 def fetch_dois(doi_list):
@@ -339,7 +340,7 @@ def fetch_dois_by_batch(doi_list):
         last_dois = fetch_dois_by_batch(doi_list[nb_dois_per_batch:])
         return first_dois + last_dois
 
-    params = {'filter': ','.join(['doi:'+doi for doi in doi_list])}
+    params = {'filter': ','.join(['doi:' + doi for doi in doi_list])}
     req = None
     try:
         # First we fetch dois by batch from CrossRef. That's fast, but only
@@ -352,7 +353,7 @@ def fetch_dois_by_batch(doi_list):
         # Some DOIs might not be in the results list, because they are issued by other organizations
         # We fetch them using our proxy (cached content negociation)
         missing_dois = list(set(doi_list) - set(dct.keys()))
-        req = requests.post('http://'+DOI_PROXY_DOMAIN +
+        req = requests.post('http://' + DOI_PROXY_DOMAIN +
                             '/batch', {'dois': json.dumps(missing_dois)})
         req.raise_for_status()
         missing_dois_dct = results_list_to_dict(req.json())
@@ -362,15 +363,15 @@ def fetch_dois_by_batch(doi_list):
         return result
     except RequestException as e:
         raise MetadataSourceException(
-            'Connecting to the DOI proxy at '+req.url+' failed: '+str(e))
+            'Connecting to the DOI proxy at ' + req.url + ' failed: ' + str(e))
     except ValueError as e:
         raise MetadataSourceException(
-            'Invalid JSON returned by the DOI proxy: '+str(e))
+            'Invalid JSON returned by the DOI proxy: ' + str(e))
     except KeyError as e:
         return []
     except requests.exceptions.RequestException as e:
         raise MetadataSourceException(
-            'Failed to retrieve batch metadata from the proxy: '+str(e))
+            'Failed to retrieve batch metadata from the proxy: ' + str(e))
 
 
 class CrossRefAPI(object):
@@ -427,7 +428,7 @@ class CrossRefAPI(object):
         if subtitle:
             if isinstance(subtitle, list):
                 subtitle = subtitle[0]
-            title += ': '+subtitle
+            title += ': ' + subtitle
 
         name_pairs = map(convert_to_name_pair, metadata['author'])
         if None in name_pairs:
@@ -483,7 +484,8 @@ class CrossRefAPI(object):
         if query:
             params['query'] = query
         if filters:
-            params['filter'] = ','.join(k+":"+v for k, v in filters.items())
+            params['filter'] = ','.join(
+                k + ":" + v for k, v in filters.items())
 
         url = 'http://api.crossref.org/works'
 
@@ -496,7 +498,7 @@ class CrossRefAPI(object):
 
             try:
                 r = requests.get(url, params=params)
-                print "CROSSREF: "+r.url
+                print "CROSSREF: " + r.url
                 js = r.json()
                 found = False
                 for item in jpath('message/items', js, default=[]):
@@ -509,7 +511,7 @@ class CrossRefAPI(object):
                                               'URL was: %s\nParameters were: %s\nJSON parser error was: %s' % (url, urlencode(params), unicode(e)))
             except requests.exceptions.RequestException as e:
                 raise MetadataSourceException('Error while fetching CrossRef results:\nUnable to open the URL: ' +
-                                              url+'\nError was: '+str(e))
+                                              url + '\nError was: ' + str(e))
 
             offset += rows
             count += 1
@@ -523,12 +525,12 @@ def fetch_zotero_by_DOI(doi):
     Works only with the doi_cache proxy.
     """
     try:
-        print('http://'+DOI_PROXY_DOMAIN+'/zotero/'+doi)
-        request = requests.get('http://'+DOI_PROXY_DOMAIN+'/zotero/'+doi)
+        print('http://' + DOI_PROXY_DOMAIN + '/zotero/' + doi)
+        request = requests.get('http://' + DOI_PROXY_DOMAIN + '/zotero/' + doi)
         return request.json()
     except ValueError as e:
         raise MetadataSourceException('Error while fetching Zotero metadata:\nInvalid JSON response.\n' +
-                                      'Error: '+str(e))
+                                      'Error: ' + str(e))
 
 
 def consolidate_publication(publi):

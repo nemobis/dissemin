@@ -3,21 +3,22 @@ from __future__ import unicode_literals
 
 from django.db import migrations
 
+
 def convert_publications(apps, schema_editor):
     OaiRecord = apps.get_model('papers', 'OaiRecord')
     Publication = apps.get_model('papers', 'Publication')
 
     OaiSource = apps.get_model('papers', 'OaiSource')
     source, _ = OaiSource.objects.get_or_create(identifier='crossref',
-            defaults={'name':'Crossref','oa':False,'priority':1,
-                'default_pubtype':'journal-article'})
+                                                defaults={'name': 'Crossref', 'oa': False, 'priority': 1,
+                                                          'default_pubtype': 'journal-article'})
 
     for p in Publication.objects.all():
         if not p.doi:
             continue
         r = OaiRecord(source=source)
-        r.identifier = 'oai:crossref.org:'+p.doi
-        r.splash_url = 'https://doi.org/'+p.doi
+        r.identifier = 'oai:crossref.org:' + p.doi
+        r.splash_url = 'https://doi.org/' + p.doi
         r.pdf_url = p.pdf_url
         r.description = p.abstract
         r.pubtype = p.pubtype
@@ -37,6 +38,7 @@ def convert_publications(apps, schema_editor):
 
     Publication.objects.all().delete()
 
+
 def do_nothing(apps, schema_editor):
     pass
 
@@ -50,5 +52,3 @@ class Migration(migrations.Migration):
     operations = [
         migrations.RunPython(convert_publications, do_nothing)
     ]
-
-

@@ -15,7 +15,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='UploadedPDF',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('id', models.AutoField(verbose_name='ID',
+                                        serialize=False, auto_created=True, primary_key=True)),
                 ('timestamp', models.DateTimeField(auto_now=True)),
                 ('orig_name', models.CharField(max_length=1024)),
                 ('file', models.FileField(upload_to='uploads/%Y/%m/%d')),

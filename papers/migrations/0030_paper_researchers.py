@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 
 from django.db import migrations, models
 
+
 def populate_researchers(apps, schema_editor):
     Paper = apps.get_model('papers', 'Paper')
 
@@ -12,8 +13,10 @@ def populate_researchers(apps, schema_editor):
             if a['researcher_id']:
                 p.researchers.add(a['researcher_id'])
 
+
 def do_nothing(apps, schema_editor):
     pass
+
 
 class Migration(migrations.Migration):
 

@@ -61,7 +61,7 @@ class RenderingTest(PrefilledTest):
             self.parser.parse(resp.content)
         except html5lib.html5parser.ParseError as e:
             print resp.content
-            print "HTML validation error: "+unicode(e)
+            print "HTML validation error: " + unicode(e)
             raise e
 
     def getPage(self, *args, **kwargs):
@@ -113,7 +113,6 @@ class PaperPagesTest(RenderingTest):
         # this ORCID profile does not have a public name:
         self.check404(
             'researcher-by-orcid', kwargs={'orcid': '0000-0002-6091-2701'})
-
 
     def test_researcher_with_empty_slug(self):
         """

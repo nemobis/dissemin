@@ -24,6 +24,7 @@ from deposit.tests import ProtocolTest
 from deposit.sword.protocol import SwordProtocol
 from unittest import expectedFailure
 
+
 class SwordProtocolTest(ProtocolTest):
     @classmethod
     def setUpClass(self):
@@ -42,4 +43,3 @@ class SwordProtocolTest(ProtocolTest):
         p = Paper.create_by_doi('10.1007/978-3-662-47666-6_5')
         r = self.dry_deposit(p, abstract='this is a test abstract')
         self.assertEqual(r.status, 'faked')
-

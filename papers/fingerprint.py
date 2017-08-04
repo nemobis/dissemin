@@ -69,7 +69,7 @@ def create_paper_plain_fingerprint(title, authors, year):
     # If the title is very short, we add the year (for "Preface", "Introduction", "New members" cases)
     # if len(title) <= 16:
     if not '-' in title:
-        buf += '-'+str(year)
+        buf += '-' + str(year)
 
     author_names_list = []
     for author in authors:
@@ -82,7 +82,7 @@ def create_paper_plain_fingerprint(title, authors, year):
         last_words = []
         for i, w in enumerate(last_name_words):
             if (w[0].isupper() or
-                    (i > 0 and last_name_separators[i-1] == '-')):
+                    (i > 0 and last_name_separators[i - 1] == '-')):
                 last_words.append(w)
 
         # If no word was uppercased, fall back on all the words
@@ -96,6 +96,6 @@ def create_paper_plain_fingerprint(title, authors, year):
 
     author_names_list.sort()
     for fp in author_names_list:
-        buf += '/'+fp
+        buf += '/' + fp
 
     return buf

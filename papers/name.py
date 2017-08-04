@@ -48,6 +48,7 @@ def match_names(a, b):
     """
     return name_similarity(a, b) > 0.
 
+
 initial_re = re.compile(r'[A-Z](\.,;)*$')
 final_comma_re = re.compile(r',+( |$)')
 
@@ -69,7 +70,7 @@ def normalize_name_words(w):
     all_lower = all(w.lower() == w for w in name_words)
     new_name_words = []
     for idx, word in enumerate(name_words):
-        force = all_lower or (idx > 0 and separators[idx-1])
+        force = all_lower or (idx > 0 and separators[idx - 1])
         new_name_words.append(recapitalize_word(word, force))
     name_words = map(remove_final_comma, new_name_words)
     return rebuild_name(name_words, separators)
@@ -90,11 +91,12 @@ def rebuild_name(name_words, separators):
             output += '.'
         if idx < len(separators):
             output += separators[idx]
-        elif idx < len(name_words)-1:
+        elif idx < len(name_words) - 1:
             print("WARNING: incorrect name splitting for '%s'" %
                   unicode(name_words))
             output += ' '
     return output
+
 
 common_abbr = set(['st', 'dr', 'prof', 'jr', 'sr',
                    'mr', 'ms', 'mrs', 'mme', 'fr'])
@@ -118,13 +120,13 @@ def split_name_words(string):
             has_period = len(match.group(2)) > 0
             if has_period:
                 if word.lower() in common_abbr:
-                    words.append(word+'.')
+                    words.append(word + '.')
                 elif len(word) <= 3:
                     # A case like "Jp." or "Jpf."
                     # In this case we understand each letter as an initial
                     for idx, char in enumerate(word):
                         words.append(char.upper())
-                        if idx < len(word)-1:
+                        if idx < len(word) - 1:
                             separators.append('-')
                 else:
                     # A case like "Joseph."
@@ -153,7 +155,7 @@ def shorten_first_name(string):
     result = ""
     for i, w in enumerate(words):
         if w[0].isupper():
-            result += w[0]+'.'
+            result += w[0] + '.'
             if i < len(separators):
                 result += separators[i] if separators[i] else ' '
     return result
@@ -232,8 +234,9 @@ def deduplicate_words(words, separators):
             if idx < len(separators):
                 cleaned_seps.append(separators[idx])
     if len(cleaned_words):
-        cleaned_seps = cleaned_seps[:len(cleaned_words)-1]
+        cleaned_seps = cleaned_seps[:len(cleaned_words) - 1]
     return cleaned_words, cleaned_seps
+
 
 # Name normalization function used by the OAI proxy
 nn_separator_re = re.compile(r',+ *')
@@ -258,10 +261,11 @@ def name_signature(first, last):
     ident = nn_final_nontext_re.sub('', ident)
     ident = nn_nontext_re.sub('-', ident)
     if len(first):
-        ident = iunaccent(first[0])+'-'+ident
+        ident = iunaccent(first[0]) + '-' + ident
     return ident
 
 ### Name similarity measure ###
+
 
 weight_initial_match = 0.4
 weight_full_match = 0.8
@@ -337,10 +341,10 @@ def name_similarity(a, b):
             sumscores += weight_first_names(parts[i])
             expanded.append((len(partsA[i]) > 1, len(partsB[i]) > 1))
         elif i < len(partsA):
-            sumscores -= 0.25*weight_first_name(partsA[i])
+            sumscores -= 0.25 * weight_first_name(partsA[i])
             expanded.append((len(partsA[i]) > 1, False))
         else:
-            sumscores -= 0.25*weight_first_name(partsB[i])
+            sumscores -= 0.25 * weight_first_name(partsB[i])
             expanded.append((False, len(partsB[i]) > 1))
 
     # Make sure expanded first names of A are included in that of B
@@ -380,8 +384,8 @@ def shallower_name_similarity(a, b):
 
     partsA, sepsA = split_name_words(firstA)
     partsB, sepsB = split_name_words(firstB)
-    partsA = [ p[0] for p in partsA ]
-    partsB = [ p[0] for p in partsB ]
+    partsA = [p[0] for p in partsA]
+    partsB = [p[0] for p in partsB]
 
     parts = zip(partsA, partsB)
     if not all(map(match_first_names, parts)):
@@ -393,7 +397,8 @@ def shallower_name_similarity(a, b):
             return 0.
 
     maxlen = max(len(partsA), len(partsB))
-    return ratio*(len(parts)+1)/(maxlen+1)
+    return ratio * (len(parts) + 1) / (maxlen + 1)
+
 
 def most_similar_author(ref_name, authors):
     """
@@ -420,11 +425,13 @@ def contains_initials(s):
     # TODO delete the following commented dead code
     return len(s) == 1  # initial_re.search(iunaccent(s)) != None
 
+
 def is_fully_capitalized(s):
     """
     Is this word fully capitalized?
     """
     return lowercase_re.search(remove_diacritics(s)) == None
+
 
 def predsplit_forward(predicate, words):
     """
@@ -440,6 +447,7 @@ def predsplit_forward(predicate, words):
             predHolds = False
             last.append(word)
     return (first, last)
+
 
 def predsplit_backwards(predicate, words):
     """
@@ -483,21 +491,21 @@ def parse_comma_name(name):
         # we assume that it is the first word of the last name
         if not initial[0] and capitalized[0] and not all(capitalized):
             (last, first) = predsplit_forward(
-                    (lambda i: capitalized[i] and not initial[i]),
-                    words)
+                (lambda i: capitalized[i] and not initial[i]),
+                words)
 
         # CASE 2: the last word is capitalized but not all of them are
         # we assume that it is the last word of the last name
         elif not initial[-1] and capitalized[-1] and not all(capitalized):
             (first, last) = predsplit_forward(
-                    (lambda i: (not capitalized[i]) or initial[i]),
-                    words)
+                (lambda i: (not capitalized[i]) or initial[i]),
+                words)
 
         # CASE 3: the first word is an initial
         elif initial[0]:
             (first, last) = predsplit_forward(
-                    (lambda i: initial[i]),
-                    words)
+                (lambda i: initial[i]),
+                words)
 
         # CASE 4: the last word is an initial
         # this is trickier, we know that the last name comes first
@@ -506,8 +514,8 @@ def parse_comma_name(name):
         # name are initials
         elif initial[-1]:
             (last, first) = predsplit_backwards(
-                    (lambda i: initial[i]),
-                    words)
+                (lambda i: initial[i]),
+                words)
 
         # CASE 5: there are initials in the name, but neither
         # at the beginning nor at the end
@@ -516,8 +524,8 @@ def parse_comma_name(name):
             for i in range(len(words)):
                 if initial[i]:
                     last_initial_idx = i
-            first = words[:last_initial_idx+1]
-            last = words[last_initial_idx+1:]
+            first = words[:last_initial_idx + 1]
+            last = words[last_initial_idx + 1:]
 
         # CASE 6: we have no clue
         # We fall back on name_tools, where wise things are done
@@ -567,12 +575,14 @@ def num_caps(a):
     """
     return sum(1 if c.isupper() else 0 for c in a)
 
+
 def normalize_last_name(last):
     """
     Removes diacritics and hyphens from last names
     for comparison
     """
-    return remove_diacritics(last.replace('-',' ')).lower()
+    return remove_diacritics(last.replace('-', ' ')).lower()
+
 
 def name_unification(a, b):
     """
@@ -659,27 +669,27 @@ def unify_name_lists(a, b):
     while iA < len(a) or iB < len(b):
         if iA == len(a):
             idxB = b[iB][0]
-            rankB = (idxB+1)/lenB
-            result.append((b[iB][1], (rankB+1)/lenB, (None, idxB)))
+            rankB = (idxB + 1) / lenB
+            result.append((b[iB][1], (rankB + 1) / lenB, (None, idxB)))
             iB += 1
         elif iB == len(b):
             idxA = a[iA][0]
-            rankA = (idxA+1)/lenA
-            result.append((a[iA][1], (rankA+1)/lenA, (idxA, None)))
+            rankA = (idxA + 1) / lenA
+            result.append((a[iA][1], (rankA + 1) / lenA, (idxA, None)))
             iA += 1
         else:
             idxA = a[iA][0]
             idxB = b[iB][0]
             nameA = a[iA][1]
             nameB = b[iB][1]
-            rankA = (idxA+1)/lenA
-            rankB = (idxB+1)/lenB
+            rankA = (idxA + 1) / lenA
+            rankB = (idxB + 1) / lenB
 
             unified = name_unification(nameA, nameB)
             if unified is not None:
                 # Those two names seem to refer to the same person
                 # and we managed to unify the names.
-                result.append((unified, 0.5*(rankA+rankB), (idxA, idxB)))
+                result.append((unified, 0.5 * (rankA + rankB), (idxA, idxB)))
                 iA += 1
                 iB += 1
             elif shallower_name_similarity(nameA, nameB) > 0.:
@@ -702,7 +712,8 @@ def unify_name_lists(a, b):
                 result.append((nameB, rankB, (None, idxB)))
                 iB += 1
 
-    result = [(name, idx) for name, _, idx in sorted(result, key=lambda x: x[1])]
+    result = [(name, idx)
+              for name, _, idx in sorted(result, key=lambda x: x[1])]
 
     def make_unique(lst):
         seen = set()

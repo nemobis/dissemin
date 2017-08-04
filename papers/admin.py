@@ -50,6 +50,7 @@ class OaiRecordAdmin(admin.ModelAdmin):
 class ResearcherAdmin(admin.ModelAdmin):
     raw_id_fields = ('name', 'stats',)
 
+
 admin.site.register(Institution)
 admin.site.register(Department)
 admin.site.register(Researcher, ResearcherAdmin)

@@ -34,5 +34,6 @@ class PublisherAdmin(admin.ModelAdmin):
     raw_id_fields = ('stats',)
     list_display = ('name', 'oa_status')
 
+
 admin.site.register(Journal, JournalAdmin)
 admin.site.register(Publisher, PublisherAdmin)

@@ -8,6 +8,7 @@ from papers.utils import extract_domain
 
 register = template.Library()
 
+
 @register.filter(is_safe=True)
 def domain(url):
     domain = extract_domain(url)

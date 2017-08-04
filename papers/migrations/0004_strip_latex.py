@@ -6,19 +6,20 @@ from papers.utils import unescape_latex
 
 
 def strip_latex(apps, schema_editor):
-    Paper = apps.get_model('papers','Paper')
+    Paper = apps.get_model('papers', 'Paper')
     size = 100
     cursor = 0
     count = Paper.objects.count()
     while cursor < count:
-        papers = Paper.objects.all()[cursor:cursor+size]
+        papers = Paper.objects.all()[cursor:cursor + size]
         cursor += size
         for paper in papers:
             new_title = unescape_latex(paper.title)
             if new_title != paper.title:
-                print '"%s" -> "%s"' % (paper.title,new_title)
+                print '"%s" -> "%s"' % (paper.title, new_title)
                 paper.title = new_title
                 paper.save(update_fields=['title'])
+
 
 class Migration(migrations.Migration):
 

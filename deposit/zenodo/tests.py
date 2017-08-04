@@ -31,6 +31,7 @@ from deposit.zenodo.protocol import ZenodoProtocol
 from papers.models import Paper
 from backend.oai import get_proaixy_instance
 
+
 class ZenodoProtocolTest(ProtocolTest):
 
     @classmethod
@@ -46,8 +47,8 @@ class ZenodoProtocolTest(ProtocolTest):
     def test_lncs(self):
         p = Paper.create_by_doi('10.1007/978-3-662-47666-6_5')
         r = self.dry_deposit(p,
-            abstract = lorem_ipsum,
-            license = 'other-open')
+                             abstract=lorem_ipsum,
+                             license='other-open')
         self.assertEqual(r.status, 'faked')
 
     def test_deposit_paper_already_on_zenodo(self):
@@ -61,7 +62,6 @@ class ZenodoProtocolTest(ProtocolTest):
             mocker.get(re.compile('.*\.zenodo\.org/.*'), status_code=500)
             p = Paper.create_by_doi('10.1007/978-3-662-47666-6_5')
             r = self.dry_deposit(p,
-                    abstract = lorem_ipsum,
-                    license = 'other-open')
+                                 abstract=lorem_ipsum,
+                                 license='other-open')
             self.assertEqual(r.status, 'failed')
-

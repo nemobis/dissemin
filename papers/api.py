@@ -43,9 +43,9 @@ def api_paper_doi(request, doi):
     if p is None:
         raise Http404("The paper you requested could not be found.")
     return {
-            'status': 'ok',
-            'paper': p.json()
-            }
+        'status': 'ok',
+        'paper': p.json()
+    }
 
 
 class PaperSearchAPI(PaperSearchView):
@@ -59,7 +59,7 @@ class PaperSearchAPI(PaperSearchView):
         papers = [
             result.object.json()
             for result in context['object_list']
-            ]
+        ]
         response = {
             'messages': context['messages'],
             'stats': stats,
@@ -67,6 +67,7 @@ class PaperSearchAPI(PaperSearchView):
             'papers': papers,
         }
         return response
+
 
 @json_view
 @csrf_exempt

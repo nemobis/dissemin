@@ -176,8 +176,8 @@ class OSFProtocol(RepositoryProtocol):
         }
 
         self.log("### Creating the metadata")
-        self.log(json.dumps(min_node_structure, indent=4)+'')
-        self.log(json.dumps(authors, indent=4)+'')
+        self.log(json.dumps(min_node_structure, indent=4) + '')
+        self.log(json.dumps(authors, indent=4) + '')
         request_url = self.api_url + "v2/nodes/"
 
         osf_response = requests.post(request_url,
@@ -225,20 +225,20 @@ class OSFProtocol(RepositoryProtocol):
                         for author in authors]
 
         license_structure = {
-                "data": {
-                    "type": "nodes",
-                    "id": self.node_id,
-                    "attributes": {},
-                    "relationships": {
+            "data": {
+                "type": "nodes",
+                "id": self.node_id,
+                "attributes": {},
+                "relationships": {
                         "license": {
                             "data": {
                                 "type": "licenses",
                                 "id": self.license_id
                             }
                         }
-                    }
                 }
             }
+        }
 
         if self.license_id == self.no_license_id:
             license_structure['data']['attributes'] = {
@@ -313,7 +313,7 @@ class OSFProtocol(RepositoryProtocol):
         }
 
         self.log("### Creating Preprint")
-        self.log(json.dumps(min_preprint_structure, indent=4)+'')
+        self.log(json.dumps(min_preprint_structure, indent=4) + '')
         osf_response = requests.post(preprint_node_url,
                                      data=json.dumps(min_preprint_structure),
                                      headers=self.headers)
@@ -500,5 +500,6 @@ class OSFProtocol(RepositoryProtocol):
         deposit_result.pdf_url = preprint_public_pdf
 
         return deposit_result
+
 
 protocol_registry.register(OSFProtocol)

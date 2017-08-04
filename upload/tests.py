@@ -47,7 +47,7 @@ class ThumbnailTest(unittest.TestCase):
     def assertValidPng(self, png):
         img = image.Image(blob=png)
         self.assertEqual(img.format, 'PNG')
-        self.assertTrue(img.width <= 2*THUMBNAIL_MAX_WIDTH)
+        self.assertTrue(img.width <= 2 * THUMBNAIL_MAX_WIDTH)
 
     def test_valid_pdf(self):
         self.assertValidPng(self.thumbnail('mediatest/blank.pdf'))

@@ -52,33 +52,33 @@ from papers.utils import validate_orcid
 ### Metadata manipulation utilities ####
 
 orcid_type_to_pubtype = {
-        'book': 'book',
-        'book-chapter': 'book-chapter',
-        'book-review': 'other',
-        'dictionary-entry': 'reference-entry',
-        'dissertation': 'thesis',
-        'encyclopedia-entry': 'reference-entry',
-        'edited-book': 'book',
-        'journal-article': 'journal-article',
-        'journal-issue': 'journal-issue',
-        'magazine-article': 'other',
-        'manual': 'other',
-        'online-resource': 'dataset',
-        'newsletter-article': 'other',
-        'newspaper-article': 'other',
-        'report': 'report',
-        'research-tool': 'other',
-        'supervised-student-publication': 'other',
-        'test': 'other',
-        'translation': 'other',
-        'website': 'other',
-        'working-paper': 'preprint',
-        'conference-abstract': 'other',
-        'conference-paper': 'proceedings-article',
-        'conference-poster': 'poster',
-        # Intellectual property section: skipped (-> 'other')
-        'data-set': 'dataset',
-    }
+    'book': 'book',
+    'book-chapter': 'book-chapter',
+    'book-review': 'other',
+    'dictionary-entry': 'reference-entry',
+    'dissertation': 'thesis',
+    'encyclopedia-entry': 'reference-entry',
+    'edited-book': 'book',
+    'journal-article': 'journal-article',
+    'journal-issue': 'journal-issue',
+    'magazine-article': 'other',
+    'manual': 'other',
+    'online-resource': 'dataset',
+    'newsletter-article': 'other',
+    'newspaper-article': 'other',
+    'report': 'report',
+    'research-tool': 'other',
+    'supervised-student-publication': 'other',
+    'test': 'other',
+    'translation': 'other',
+    'website': 'other',
+    'working-paper': 'preprint',
+    'conference-abstract': 'other',
+    'conference-paper': 'proceedings-article',
+    'conference-poster': 'poster',
+    # Intellectual property section: skipped (-> 'other')
+    'data-set': 'dataset',
+}
 
 
 def orcid_oai_source():
@@ -99,7 +99,7 @@ def affiliate_author_with_orcid(ref_name, orcid, authors, initial_orcids=None):
     list (None everywhere except for the most similar name where it is the ORCiD).
     """
     max_sim_idx = most_similar_author(ref_name, authors)
-    orcids = [None]*len(authors)
+    orcids = [None] * len(authors)
     if initial_orcids and len(initial_orcids) == len(authors):
         orcids = initial_orcids
     if max_sim_idx is not None:
@@ -146,14 +146,15 @@ class ORCIDMetadataExtractor(object):
         # Contributors (ignored for now as they are very often not present)
         def get_contrib(js):
             return {
-                    'orcid': jpath('contributor-orcid', js),
-                    'name': jpath('credit-name/value', js),
+                'orcid': jpath('contributor-orcid', js),
+                'name': jpath('credit-name/value', js),
             }
 
         return map(get_contrib, self.j('work-contributors/contributor', []))
 
     def authors_from_contributors(self, contributors):
-        author_names = [c['name'] for c in contributors if c['name'] is not None]
+        author_names = [c['name']
+                        for c in contributors if c['name'] is not None]
         return map(parse_comma_name, author_names)
 
     def pubdate(self):
@@ -202,9 +203,9 @@ class ORCIDMetadataExtractor(object):
 
     def convert_authors(self, authors, orcids):
         names = [BareName.create_bare(first, last)
-                for first, last in authors]
+                 for first, last in authors]
         names_and_orcids = zip(names, orcids)
-        filtered = [(n,o) for n, o in names_and_orcids if  n is not None ]
+        filtered = [(n, o) for n, o in names_and_orcids if n is not None]
         final_names = [n for n, o in filtered]
         final_orcids = [o for n, o in filtered]
         return final_names, final_orcids
@@ -244,10 +245,10 @@ class ORCIDDataPaper(object):
     def is_skipped(self):
         return any(lambda item: not item,
                    [
-                    self.title,
-                    self.authors,
-                    self.pubdate
-                       ])
+                       self.title,
+                       self.authors,
+                       self.pubdate
+                   ])
 
     def throw_skipped(self):
         if not self.title:
@@ -288,7 +289,8 @@ class ORCIDDataPaper(object):
 
             paper.orcids = extractor.orcids(
                 orcid_id, ref_name, paper.authors, paper.orcids)
-            paper.authors, paper.orcidse = extractor.convert_authors(paper.authors, paper.orcids)
+            paper.authors, paper.orcidse = extractor.convert_authors(
+                paper.authors, paper.orcids)
 
             paper.initialize()
             return paper
@@ -385,11 +387,11 @@ class OrcidPaperSource(PaperSource):
                     continue
 
                 record = BareOaiRecord(
-                        source=orcid_oai_source(),
-                        identifier='orcid:%s:%s' % (orcid_id, metadata['DOI']),
-                        splash_url='http://%s/%s' % (
-                            settings.ORCID_BASE_DOMAIN, orcid_id),
-                        pubtype=paper.doctype)
+                    source=orcid_oai_source(),
+                    identifier='orcid:%s:%s' % (orcid_id, metadata['DOI']),
+                    splash_url='http://%s/%s' % (
+                        settings.ORCID_BASE_DOMAIN, orcid_id),
+                    pubtype=paper.doctype)
                 paper.add_oairecord(record)
                 yield True, paper
             except (KeyError, ValueError, TypeError):
@@ -408,10 +410,10 @@ class OrcidPaperSource(PaperSource):
                 'papers': ignored_papers
             }
             add_notification_for([user],
-                                    notification_levels.ERROR,
-                                    notification,
-                                    'backend_orcid'
-                                    )
+                                 notification_levels.ERROR,
+                                 notification,
+                                 'backend_orcid'
+                                 )
 
     def fetch_orcid_records(self, orcid_identifier, profile=None, use_doi=True):
         """
@@ -442,7 +444,7 @@ class OrcidPaperSource(PaperSource):
 
         # As we have fetched the profile, let's update the Researcher
         self.researcher = Researcher.get_or_create_by_orcid(orcid_identifier,
-                profile.json, update=True)
+                                                            profile.json, update=True)
         if not self.researcher:
             return
 
@@ -484,7 +486,7 @@ class OrcidPaperSource(PaperSource):
                 )
                 if data_paper.skipped:
                     print('%s is skipped due to incorrect metadata (%s)' %
-                        (data_paper, data_paper.skip_reason))
+                          (data_paper, data_paper.skip_reason))
 
                     ignored_papers.append(data_paper.as_dict())
                     continue
@@ -494,7 +496,7 @@ class OrcidPaperSource(PaperSource):
         # 2nd attempt with DOIs and CrossRef
         if use_doi:
             # Let's grab papers from CrossRef
-            #for success, paper_or_metadata in self.fetch_crossref_incrementally(cr_api, orcid_id):
+            # for success, paper_or_metadata in self.fetch_crossref_incrementally(cr_api, orcid_id):
             #    if success:
             #        yield paper_or_metadata
             #    else:
@@ -517,7 +519,6 @@ class OrcidPaperSource(PaperSource):
         if ignored_papers:
             print('Warning: Total ignored papers: %d' % (len(ignored_papers)))
 
-
     def bulk_import(self, directory, fetch_papers=True, use_doi=False):
         """
         Bulk-imports ORCID profiles from a dmup
@@ -529,25 +530,24 @@ class OrcidPaperSource(PaperSource):
 
         for root, _, fnames in os.walk(directory):
             for fname in fnames:
-                #if fname == '0000-0003-1349-4524.json':
+                # if fname == '0000-0003-1349-4524.json':
                 #    seen = True
-                #if not seen:
+                # if not seen:
                 #    continue
 
                 with open(path.join(root, fname), 'r') as f:
                     try:
                         profile = json.load(f)
                         orcid = profile['orcid-profile'][
-                                        'orcid-identifier'][
-                                        'path']
+                            'orcid-identifier'][
+                            'path']
                         r = Researcher.get_or_create_by_orcid(
                             orcid, profile, update=True)
                         if fetch_papers:
                             papers = self.fetch_orcid_records(orcid,
-                                profile=profile,
-                                use_doi=use_doi)
+                                                              profile=profile,
+                                                              use_doi=use_doi)
                             for p in papers:
                                 self.save_paper(p, r)
                     except (ValueError, KeyError):
                         print "Invalid profile: %s" % fname
-

@@ -17,6 +17,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='paperworld',
             name='stats',
-            field=models.ForeignKey(default=papers.models.create_default_stats, on_delete=django.db.models.deletion.CASCADE, to='statistics.AccessStatistics'),
+            field=models.ForeignKey(default=papers.models.create_default_stats,
+                                    on_delete=django.db.models.deletion.CASCADE, to='statistics.AccessStatistics'),
         ),
     ]

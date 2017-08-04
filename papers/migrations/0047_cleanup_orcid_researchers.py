@@ -4,8 +4,10 @@ from __future__ import unicode_literals
 
 from django.db import migrations
 
+
 def backwards(apps, se):
     pass
+
 
 def cleanup(apps, se):
     Researcher = apps.get_model('papers', 'Researcher')
@@ -24,6 +26,7 @@ def cleanup(apps, se):
                 p.authors_list[pos]['researcher_id'] = None
                 p.researchers.remove(r)
                 p.save(update_fields=['authors_list'])
+
 
 class Migration(migrations.Migration):
 

@@ -15,5 +15,5 @@ def fullname(user):
     if user.last_name:
         firstname = user.first_name or ''
         shortened = shorten_first_name(firstname)
-        result = shortened+' '+user.last_name
+        result = shortened + ' ' + user.last_name
     return mark_safe(escape(unicode(result)))

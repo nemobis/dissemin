@@ -50,6 +50,7 @@ def parse_bibtex(bibtex):
 
 ### Bibtex utilites ###
 
+
 bibtex_header_no_newline = re.compile(r'^(@\w*\W*{\W*\w+\W*,) *(?=[a-z])')
 bibtex_statement_no_newline = re.compile(r'(},) *([a-zA-Z]+\W*=\W*{)')
 bibtex_end_no_newline = re.compile(r'} *,? *} *$')
@@ -65,6 +66,7 @@ def insert_newlines_in_bibtex(bib):
     bib2 = bibtex_statement_no_newline.sub(r'\1\n\2', bib1)
     bib3 = bibtex_end_no_newline.sub('}\n}', bib2)
     return bib3
+
 
 et_al_re = re.compile(r'( and )?\s*et\s+al\.?\s*$', re.IGNORECASE | re.UNICODE)
 

@@ -42,11 +42,13 @@ simple_png_image = b'\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00
 # for sample abstracts
 lorem_ipsum = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
 
+
 class DepositTest(django.test.TestCase):
     def test_refresh_deposit_statuses(self):
         # TODO: set up some DepositRecords + repository and protocol, to
         # so that this task actually does something
         refresh_deposit_statuses()
+
 
 class ProtocolTest(PrefilledTest):
     """
@@ -63,24 +65,24 @@ class ProtocolTest(PrefilledTest):
             raise unittest.SkipTest("Base test")
         super(ProtocolTest, self).setUpClass()
         self.p1 = Paper.get_or_create(
-                "This is a test paper",
-                [self.r1.name, self.r2.name, self.r4.name],
-                date(year=2014, month=02, day=15))
+            "This is a test paper",
+            [self.r1.name, self.r2.name, self.r4.name],
+            date(year=2014, month=02, day=15))
         self.user, _ = User.objects.get_or_create(username='myuser')
         self.oaisource, _ = OaiSource.objects.get_or_create(
             identifier='deposit_oaisource',
             name='Repository OAI source',
             default_pubtype='preprint')
         logo = InMemoryUploadedFile(
-                BytesIO(simple_png_image),
-                None, 'logo.png',
-                'image/png', len(simple_png_image), None, None)
+            BytesIO(simple_png_image),
+            None, 'logo.png',
+            'image/png', len(simple_png_image), None, None)
         self.repo = Repository.objects.create(
-                name='Repository Sandbox',
-                description='babebibobu',
-                logo=logo,
-                protocol=self.__name__,
-                oaisource=self.oaisource)
+            name='Repository Sandbox',
+            description='babebibobu',
+            logo=logo,
+            protocol=self.__name__,
+            oaisource=self.oaisource)
         self.proto = None
         self.form = None
 
@@ -131,8 +133,8 @@ class ProtocolTest(PrefilledTest):
             print self.proto._logs
         self.assertEqual(a, b)
 
+
 class ProtocolRegistryTest(django.test.TestCase):
     def test_get(self):
         c = protocol_registry.get('ZenodoProtocol')
         self.assertTrue(issubclass(c, RepositoryProtocol))
-

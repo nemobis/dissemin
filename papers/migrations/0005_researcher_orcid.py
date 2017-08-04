@@ -14,7 +14,8 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='researcher',
             name='orcid',
-            field=models.CharField(max_length=32, unique=True, null=True, blank=True),
+            field=models.CharField(
+                max_length=32, unique=True, null=True, blank=True),
             preserve_default=True,
         ),
     ]

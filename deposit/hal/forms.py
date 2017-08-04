@@ -29,8 +29,10 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 from deposit.hal.models import HALDepositPreferences
 
+
 class AffiliationSelect2(Select2):
     autocomplete_function = 'select2-customTemplate'
+
 
 class HALForm(FormWithAbstract):
 
@@ -40,14 +42,14 @@ class HALForm(FormWithAbstract):
             map(unicode, paper.authors))
 
     topic = forms.ChoiceField(
-            label=__('Scientific field'),
-            choices=HAL_TOPIC_CHOICES)
+        label=__('Scientific field'),
+        choices=HAL_TOPIC_CHOICES)
 
     depositing_author = forms.TypedChoiceField(
         required=True,
         label=__('Depositing author'),
-        choices=[], # choices are initialized from the paper later on
-        coerce=int, # values are indexes of authors
+        choices=[],  # choices are initialized from the paper later on
+        coerce=int,  # values are indexes of authors
     )
 
     affiliation = forms.CharField(
@@ -61,6 +63,7 @@ class HALForm(FormWithAbstract):
             },
         )
     )
+
 
 class HALPreferencesForm(forms.ModelForm):
     class Meta:
@@ -76,4 +79,3 @@ class HALPreferencesForm(forms.ModelForm):
         self.helper.add_input(
             Submit('submit', __('Save')),
         )
-

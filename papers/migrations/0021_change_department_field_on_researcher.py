@@ -15,6 +15,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='researcher',
             name='department',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.SET_NULL, to='papers.Department', null=True),
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.SET_NULL, to='papers.Department', null=True),
         ),
     ]

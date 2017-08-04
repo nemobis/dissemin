@@ -74,11 +74,11 @@ class HALProtocol(RepositoryProtocol):
         """
         We reject in advance papers that are already in HAL
         """
-        super(HALProtocol, self).init_deposit(paper,user)
+        super(HALProtocol, self).init_deposit(paper, user)
         for r in paper.oairecords:
             domain = extract_domain(r.splash_url) or ''
             if ('oai:HAL:' in r.identifier or
-                domain.endswith('archives-ouvertes.fr')):
+                    domain.endswith('archives-ouvertes.fr')):
                 return False
 
         self.hal_preferences = self.get_preferences(user)
@@ -120,8 +120,8 @@ class HALProtocol(RepositoryProtocol):
         most_similar_idx = None
         first, last = (self.user.first_name, self.user.last_name)
         if first and last:
-            most_similar_idx = most_similar_author((first,last),
-                self.paper.author_name_pairs())
+            most_similar_idx = most_similar_author((first, last),
+                                                   self.paper.author_name_pairs())
         data['depositing_author'] = most_similar_idx
 
         return data
@@ -175,7 +175,7 @@ class HALProtocol(RepositoryProtocol):
                 'Content-Disposition': 'attachment; filename=meta.xml',
                 'Content-Length': len(zipContent),
                 'On-Behalf-Of': ';'.join(on_behalf_of),
-                }
+            }
             for header, value in headers.items():
                 conn.putheader(header, value)
             conn.endheaders()
@@ -202,7 +202,8 @@ class HALProtocol(RepositoryProtocol):
                     try:
                         # Give a better error message to the user if the document
                         # already exists in HAL. See #356.
-                        assert "duplicate-entry" in json.loads(verboseDescription)
+                        assert "duplicate-entry" in json.loads(
+                            verboseDescription)
                         raise DepositError(
                             __(
                                 'This document is already in HAL. '
@@ -213,8 +214,8 @@ class HALProtocol(RepositoryProtocol):
                         raise DepositError(
                             __(
                                 'HAL refused the deposit (HTTP error %d): %s') %
-                                (resp.status, verboseDescription)
-                            )
+                            (resp.status, verboseDescription)
+                        )
             except etree.XMLSyntaxError:
                 self.log('Invalid XML response from HAL:')
                 self.log(xml_response.decode('utf-8'))
@@ -235,13 +236,16 @@ class HALProtocol(RepositoryProtocol):
 
                 # Otherwise this error should not happen: let's dump
                 # everything to check later
-                self.log('Here is the XML response:{}'.format(xml_response.decode('utf-8')))
-                self.log('Here is the metadata:{}'.format(metadata.decode('utf-8')))
+                self.log('Here is the XML response:{}'.format(
+                    xml_response.decode('utf-8')))
+                self.log('Here is the metadata:{}'.format(
+                    metadata.decode('utf-8')))
                 raise DepositError(__('HAL rejected the submission.'))
             else:
                 self.log(xml_response)
 
-            deposition_id = receipt.find('{http://www.w3.org/2005/Atom}id').text
+            deposition_id = receipt.find(
+                '{http://www.w3.org/2005/Atom}id').text
             password = receipt.find(
                 '{http://hal.archives-ouvertes.fr/}password').text
             document_url = resp.getheader('location')
@@ -254,18 +258,18 @@ class HALProtocol(RepositoryProtocol):
             deposit_result.identifier = deposition_id
             deposit_result.splash_url = document_url
             deposit_result.pdf_url = None
-            deposit_result.status = 'pending' # HAL moderates submissions
+            deposit_result.status = 'pending'  # HAL moderates submissions
             deposit_result.additional_info = [
-                {'label':__('Password'),
-                 'value':password},
+                {'label': __('Password'),
+                 'value': password},
             ]
 
             if dry_run:
                 conn = http_client.HTTPConnection(host)
-                conn.putrequest('DELETE', '/sword/'+deposition_id)
+                conn.putrequest('DELETE', '/sword/' + deposition_id)
                 headers = {
                     'Authorization': self.encodeUserData(),
-                   # 'Host': host,
+                    # 'Host': host,
                     'Accept': '*/*',
                     'User-Agent': 'dissemin',
                 }
@@ -281,7 +285,7 @@ class HALProtocol(RepositoryProtocol):
             raise e
         except Exception as e:
             self.log("Caught exception:")
-            self.log(str(type(e))+': '+str(e)+'')
+            self.log(str(type(e)) + ': ' + str(e) + '')
             self.log(traceback.format_exc())
             raise DepositError(__(
                 'Connection to HAL failed. Please try again later.'))
@@ -322,7 +326,7 @@ class HALProtocol(RepositoryProtocol):
         """
         deposit_url = '%s%s' % (self.api_url, identifier)
         req = requests.get(deposit_url,
-                auth=requests.auth.HTTPBasicAuth(self.username,self.password))
+                           auth=requests.auth.HTTPBasicAuth(self.username, self.password))
         if req.status_code == 400:
             return 'deleted'
         req.raise_for_status()
@@ -341,4 +345,3 @@ class HALProtocol(RepositoryProtocol):
 
 
 protocol_registry.register(HALProtocol)
-

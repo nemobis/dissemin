@@ -15,7 +15,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Department',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('id', models.AutoField(verbose_name='ID',
+                                        serialize=False, auto_created=True, primary_key=True)),
                 ('name', models.CharField(max_length=300)),
             ],
             options={
@@ -25,9 +26,11 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Institution',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('id', models.AutoField(verbose_name='ID',
+                                        serialize=False, auto_created=True, primary_key=True)),
                 ('name', models.CharField(max_length=300)),
-                ('stats', models.ForeignKey(blank=True, to='statistics.AccessStatistics', null=True)),
+                ('stats', models.ForeignKey(blank=True,
+                                            to='statistics.AccessStatistics', null=True)),
             ],
             options={
             },
@@ -42,7 +45,8 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='department',
             name='stats',
-            field=models.ForeignKey(blank=True, to='statistics.AccessStatistics', null=True),
+            field=models.ForeignKey(
+                blank=True, to='statistics.AccessStatistics', null=True),
             preserve_default=True,
         ),
         migrations.AddField(

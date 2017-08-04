@@ -98,21 +98,21 @@ from solo.models import SingletonModel
 from search import SearchQuerySet
 
 UPLOAD_TYPE_CHOICES = [
-   ('preprint', _('Preprint')),
-   ('postprint', _('Postprint')),
-   ('pdfversion', _("Published version")),
-   ]
+    ('preprint', _('Preprint')),
+    ('postprint', _('Postprint')),
+    ('pdfversion', _("Published version")),
+]
 
 HARVESTER_TASK_CHOICES = [
-   ('init', _('Preparing profile')),
-   ('orcid', _('Fetching publications from ORCID')),
-   ('crossref', _('Fetching publications from CrossRef')),
-   ('base', _('Fetching publications from BASE')),
-   ('core', _('Fetching publications from CORE')),
-   ('oai', _('Fetching publications from OAI-PMH')),
-   ('clustering', _('Clustering publications')),
-   ('stats', _('Updating statistics')),
-   ]
+    ('init', _('Preparing profile')),
+    ('orcid', _('Fetching publications from ORCID')),
+    ('crossref', _('Fetching publications from CrossRef')),
+    ('base', _('Fetching publications from BASE')),
+    ('core', _('Fetching publications from CORE')),
+    ('oai', _('Fetching publications from OAI-PMH')),
+    ('clustering', _('Clustering publications')),
+    ('stats', _('Updating statistics')),
+]
 
 
 class Institution(models.Model):
@@ -122,7 +122,8 @@ class Institution(models.Model):
     #: The full name of the institution
     name = models.CharField(max_length=300)
     #: A list of identifiers for the institution (eg: ringgold-2167 for MIT)
-    identifiers = ArrayField(models.CharField(max_length=256), null=True, blank=True)
+    identifiers = ArrayField(models.CharField(
+        max_length=256), null=True, blank=True)
     #: Country code
     country = CountryField(null=True, blank=True)
     #: Coordinates
@@ -208,7 +209,7 @@ class Institution(models.Model):
         identifiers = []
         # add the 'fingerprint' for that institution
         identifiers.append(
-            dct['country']+':'+iunaccent(dct['name']))
+            dct['country'] + ':' + iunaccent(dct['name']))
         # maybe add a disambiguated identifier
         if dct.get('identifier'):
             identifiers.append(
@@ -239,7 +240,7 @@ class Institution(models.Model):
                         i.name = dct['name']
                     i.save()
                 return i
-        except DataError: # did not fit in the DB
+        except DataError:  # did not fit in the DB
             pass
 
     def merge(self, i):
@@ -248,8 +249,8 @@ class Institution(models.Model):
         """
         if len(i.name) < len(self.name):
             self.name = i.name
-        self.identifiers = list(set(self.identifiers)|
-                             set(i.identifiers))
+        self.identifiers = list(set(self.identifiers) |
+                                set(i.identifiers))
         self.save()
         i.researcher_set.all().update(institution=self)
         i.department_set.all().update(institution=self)
@@ -262,23 +263,22 @@ class Institution(models.Model):
         """
         import requests
         r = requests.get('http://nominatim.openstreetmap.org/search/',
-            params={
-            'q':self.name,
-            'countrycodes':self.country.code,
-            'format':'json'})
+                         params={
+                             'q': self.name,
+                             'countrycodes': self.country.code,
+                             'format': 'json'})
         data = r.json()
 
         if(len(data) > 0):
             longitude = data[0]['lat']
             latitude = data[0]['lon']
-            self.coords = {'type':'Point','coordinates':
-                        [float(latitude),float(longitude)]}
+            self.coords = {'type': 'Point', 'coordinates':
+                           [float(latitude), float(longitude)]}
             self.save(update_fields=['coords'])
 
         if sleep_time:
             from time import sleep
             sleep(sleep_time)
-
 
 
 class Department(models.Model):
@@ -299,6 +299,7 @@ class Department(models.Model):
     def sorted_researchers(self):
         """List of :py:class:`Researcher` in this department sorted by last name (prefetches their stats as well)"""
         return self.researcher_set.select_related('name', 'stats').order_by('name')
+
     def __unicode__(self):
         return self.name
 
@@ -327,7 +328,7 @@ class Department(models.Model):
         return reverse('department', args=[self.pk])
 
     def breadcrumbs(self):
-        return self.institution.breadcrumbs()+[(unicode(self), self.url)]
+        return self.institution.breadcrumbs() + [(unicode(self), self.url)]
 
 
 class NameVariant(models.Model):
@@ -359,10 +360,10 @@ class Researcher(models.Model):
     user = models.ForeignKey(User, null=True, blank=True)
     #: It can be affiliated to a department
     department = models.ForeignKey(Department, null=True,
-                                on_delete=models.SET_NULL)
+                                   on_delete=models.SET_NULL)
     #: Or directly to an institution
     institution = models.ForeignKey(Institution, null=True,
-                                on_delete=models.SET_NULL)
+                                    on_delete=models.SET_NULL)
 
     # Various info about the researcher (not used internally)
     #: Email address for this researcher
@@ -409,15 +410,15 @@ class Researcher(models.Model):
         sorted by decreasing publication date
         """
         return Paper.objects.filter(
-                authors_list__contains=[{'researcher_id': self.id}]
-                          ).order_by('-pubdate')
+            authors_list__contains=[{'researcher_id': self.id}]
+        ).order_by('-pubdate')
 
     @property
     def matching_papers_url(self):
         """
         URL of the search page for papers with a matching name
         """
-        return reverse('search')+'?'+urlencode({'authors': self.name.full})
+        return reverse('search') + '?' + urlencode({'authors': self.name.full})
 
     @property
     def name_variants(self):
@@ -441,7 +442,7 @@ class Researcher(models.Model):
         if name.id is None:
             name.save()
         NameVariant.objects.get_or_create(
-                name=name, researcher=self, defaults={'confidence': confidence})
+            name=name, researcher=self, defaults={'confidence': confidence})
         if name.best_confidence < confidence or force_update:
             name.best_confidence = confidence
             name.save(update_fields=['best_confidence'])
@@ -449,10 +450,10 @@ class Researcher(models.Model):
     def update_stats(self):
         """Update the access statistics for the papers authored by this researcher"""
         print "Researcher.update_stats should not be used anymore"
-        #if not self.stats:
+        # if not self.stats:
         #    self.stats = AccessStatistics.objects.create()
         #    self.save()
-        #self.stats.update(self.papers)
+        # self.stats.update(self.papers)
 
     def fetch_everything(self):
         from backend.tasks import fetch_everything_for_researcher
@@ -469,12 +470,12 @@ class Researcher(models.Model):
         self.current_task = 'init'
         self.save(update_fields=['current_task'])
         self.harvester = getattr(init_profile_from_orcid.delay(pk=self.id),
-'id', None)
+                                 'id', None)
         self.save(update_fields=['harvester'])
 
     @classmethod
     def get_or_create_by_orcid(cls, orcid, profile=None,
-                    user=None, update=False, instance=settings.ORCID_BASE_DOMAIN):
+                               user=None, update=False, instance=settings.ORCID_BASE_DOMAIN):
         """
         Creates (or returns an existing) researcher from its ORCID id.
 
@@ -508,12 +509,12 @@ class Researcher(models.Model):
         email = profile.email
         institution = profile.institution
         if institution:
-            institution  = Institution.create(institution)
+            institution = Institution.create(institution)
 
         if not researcher:
             researcher = Researcher.create_by_name(name[0], name[1], orcid=orcid,
-                    user=user, homepage=homepage, email=email,
-                    institution=institution)
+                                                   user=user, homepage=homepage, email=email,
+                                                   institution=institution)
         if not researcher:
             # invalid name?
             return
@@ -578,9 +579,9 @@ class Researcher(models.Model):
         """
         last = [(unicode(self), self.url)]
         # Institutions temporarily disabled while they are not populated
-        #if self.department:
+        # if self.department:
         #    return self.department.breadcrumbs()+last
-        #elif self.institution:
+        # elif self.institution:
         #    return self.institution.breadcrumbs()+last
         return last
 
@@ -606,7 +607,7 @@ class Researcher(models.Model):
 class Name(models.Model, BareName):
     first = models.CharField(max_length=MAX_NAME_LENGTH)
     last = models.CharField(max_length=MAX_NAME_LENGTH)
-    full = models.CharField(max_length=MAX_NAME_LENGTH*2+1, db_index=True)
+    full = models.CharField(max_length=MAX_NAME_LENGTH * 2 + 1, db_index=True)
     best_confidence = models.FloatField(default=0.)
 
     class Meta:
@@ -633,8 +634,8 @@ class Name(models.Model, BareName):
 
         # Do this check after escaping, because this migth expand the
         # name.
-        if (len(n.first or '') >= MAX_NAME_LENGTH-1 or
-            len(n.last or '') >= MAX_NAME_LENGTH-1):
+        if (len(n.first or '') >= MAX_NAME_LENGTH - 1 or
+                len(n.last or '') >= MAX_NAME_LENGTH - 1):
             return (None, False)
 
         return cls.objects.get_or_create(full=n.full[:255],
@@ -684,6 +685,8 @@ class Name(models.Model, BareName):
 MAX_OAIRECORDS_PER_PAPER = 100
 
 # Papers matching one or more researchers
+
+
 class Paper(models.Model, BarePaper):
     title = models.CharField(max_length=1024)
     fingerprint = models.CharField(max_length=64, unique=True)
@@ -730,7 +733,7 @@ class Paper(models.Model, BarePaper):
         """
         The authors' names, represented as (first,last) pairs.
         """
-        return [(a.name.first,a.name.last) for a in self.authors]
+        return [(a.name.first, a.name.last) for a in self.authors]
 
     @property
     def publications(self):
@@ -768,8 +771,8 @@ class Paper(models.Model, BarePaper):
         The list of researcher ids associated with this paper,
         returned as a list.
         """
-        return [ a['researcher_id'] for a in self.authors_list
-                 if a.get('researcher_id') is not None]
+        return [a['researcher_id'] for a in self.authors_list
+                if a.get('researcher_id') is not None]
 
     @property
     def researchers(self):
@@ -777,8 +780,8 @@ class Paper(models.Model, BarePaper):
         The list of researchers associated with this paper, returned
         as a list of Researcher instances.
         """
-        return [ Researcher.objects.get(id=rid)
-                 for rid in self.researcher_ids ]
+        return [Researcher.objects.get(id=rid)
+                for rid in self.researcher_ids]
 
     def add_author(self, author, position=None):
         """
@@ -871,8 +874,8 @@ class Paper(models.Model, BarePaper):
                 if paper.visible and not p.visible:
                     p.visible = True
                 p.update_authors(
-                        paper.authors,
-                        save_now=False)
+                    paper.authors,
+                    save_now=False)
                 for record in paper.oairecords:
                     p.add_oairecord(record)
                 p.update_availability()  # in Paper, this saves to the db
@@ -884,7 +887,7 @@ class Paper(models.Model, BarePaper):
 
         except DataError as e:
             raise ValueError(
-                'Invalid paper, does not fit in the database schema:\n'+unicode(e))
+                'Invalid paper, does not fit in the database schema:\n' + unicode(e))
 
     ### Other methods, specific to this non-bare subclass ###
 
@@ -1006,7 +1009,7 @@ class Paper(models.Model, BarePaper):
         if not owned and flexible:
             user_name = (user.first_name, user.last_name)
             return any(match_names(a, user_name)
-                   for a in self.author_name_pairs())
+                       for a in self.author_name_pairs())
         return owned
 
     @cached_property
@@ -1095,7 +1098,7 @@ class Paper(models.Model, BarePaper):
         Creates a paper given a HAL id (e.g. hal-01227383)
         """
         return self.create_by_oai_id(
-            'ftccsdartic:oai:hal.archives-ouvertes.fr:'+hal_id,
+            'ftccsdartic:oai:hal.archives-ouvertes.fr:' + hal_id,
             bare=bare)
 
     @classmethod
@@ -1109,7 +1112,7 @@ class Paper(models.Model, BarePaper):
         if bare:
             return p
         elif p:
-            return Paper.from_bare(p) # TODO index it?
+            return Paper.from_bare(p)  # TODO index it?
 
     def successful_deposits(self):
         return self.depositrecord_set.filter(oairecord__isnull=False)
@@ -1118,7 +1121,7 @@ class Paper(models.Model, BarePaper):
         """
         Invalidate the HTML cache for all the publications of this researcher.
         """
-        for a in self.authors+[None]:
+        for a in self.authors + [None]:
             rpk = None
             if a:
                 if a.researcher_id is None:
@@ -1281,7 +1284,7 @@ class Paper(models.Model, BarePaper):
         for using in using_backends:
             try:
                 index = haystack.connections[using].get_unified_index(
-                                        ).get_index(Paper)
+                ).get_index(Paper)
                 index.remove_object(self, using=using)
             except haystack.exceptions.NotHandled:
                 pass
@@ -1294,16 +1297,18 @@ class Paper(models.Model, BarePaper):
         for using in using_backends:
             try:
                 index = haystack.connections[using].get_unified_index(
-                                        ).get_index(Paper)
+                ).get_index(Paper)
                 index.update_object(self, using=using)
             except haystack.exceptions.NotHandled:
                 pass
 
 # Rough data extracted through OAI-PMH
 
+
 class OaiSourceManager(CachingManager):
     def get_by_natural_key(self, identifier):
         return self.get(identifier=identifier)
+
 
 class OaiSource(CachingMixin, models.Model):
     objects = OaiSourceManager()
@@ -1381,11 +1386,13 @@ class OaiRecord(models.Model, BareOaiRecord):
             except ObjectDoesNotExist:
                 pass
             if source is None:
-                raise ValueError('No source provided to create the OAI record.')
+                raise ValueError(
+                    'No source provided to create the OAI record.')
         else:
             source = kwargs['source']
         if kwargs.get('identifier') is None:
-            raise ValueError('No identifier provided to create the OAI record.')
+            raise ValueError(
+                'No identifier provided to create the OAI record.')
         identifier = kwargs['identifier']
         if kwargs.get('about') is None:
             raise ValueError('No paper provided to create the OAI record.')
@@ -1402,9 +1409,9 @@ class OaiRecord(models.Model, BareOaiRecord):
         if not about.just_created:
             # Search for duplicate records
             match = OaiRecord.find_duplicate_records(
-                    about,
-                    splash_url,
-                    pdf_url)
+                about,
+                splash_url,
+                pdf_url)
 
         # We check that there are not already too many records in this
         # paper
@@ -1421,26 +1428,26 @@ class OaiRecord(models.Model, BareOaiRecord):
         if not match:
             # Otherwise create a new record
             record = OaiRecord(
-                    source=source,
-                    identifier=identifier,
-                    splash_url=splash_url,
-                    pdf_url=pdf_url,
-                    about=about,
-                    description=kwargs.get('description'),
-                    keywords=kwargs.get('keywords'),
-                    contributors=kwargs.get('contributors'),
-                    pubtype=kwargs.get('pubtype', source.default_pubtype),
-                    priority=source.priority,
-                    journal_title=kwargs.get('journal_title'),
-                    container=kwargs.get('container'),
-                    publisher_name=kwargs.get('publisher_name'),
-                    issue=kwargs.get('issue'),
-                    volume=kwargs.get('volume'),
-                    pages=kwargs.get('pages'),
-                    doi=kwargs.get('doi'),
-                    publisher=kwargs.get('publisher'),
-                    journal=kwargs.get('journal'),
-                    )
+                source=source,
+                identifier=identifier,
+                splash_url=splash_url,
+                pdf_url=pdf_url,
+                about=about,
+                description=kwargs.get('description'),
+                keywords=kwargs.get('keywords'),
+                contributors=kwargs.get('contributors'),
+                pubtype=kwargs.get('pubtype', source.default_pubtype),
+                priority=source.priority,
+                journal_title=kwargs.get('journal_title'),
+                container=kwargs.get('container'),
+                publisher_name=kwargs.get('publisher_name'),
+                issue=kwargs.get('issue'),
+                volume=kwargs.get('volume'),
+                pages=kwargs.get('pages'),
+                doi=kwargs.get('doi'),
+                publisher=kwargs.get('publisher'),
+                journal=kwargs.get('journal'),
+            )
             # with transaction.atomic():
             record.save()
 
@@ -1482,7 +1489,7 @@ class OaiRecord(models.Model, BareOaiRecord):
             new_pubtype = kwargs.get('pubtype', source.default_pubtype)
             if new_pubtype in PAPER_TYPE_PREFERENCE:
                 idx = PAPER_TYPE_PREFERENCE.index(new_pubtype)
-                old_idx = len(PAPER_TYPE_PREFERENCE)-1
+                old_idx = len(PAPER_TYPE_PREFERENCE) - 1
                 if match.pubtype in PAPER_TYPE_PREFERENCE:
                     old_idx = PAPER_TYPE_PREFERENCE.index(match.pubtype)
                 if idx < old_idx:
@@ -1500,7 +1507,7 @@ class OaiRecord(models.Model, BareOaiRecord):
 
                 except DataError as e:
                     raise ValueError(
-                        'Unable to create OAI record:\n'+unicode(e))
+                        'Unable to create OAI record:\n' + unicode(e))
 
             if about.pk != match.about.pk:
                 match.about.merge(about)

@@ -100,8 +100,11 @@ class CrossRefTest(TestCase):
         self.assertTrue(p.is_orphan())
 
     def test_doi_open(self):
-        self.assertTrue(self.api.create_paper_by_doi('10.15200/winn.145838.88372').pdf_url)
-        self.assertFalse(self.api.create_paper_by_doi('10.5061/dryad.b167g').pdf_url)
+        self.assertTrue(self.api.create_paper_by_doi(
+            '10.15200/winn.145838.88372').pdf_url)
+        self.assertFalse(self.api.create_paper_by_doi(
+            '10.5061/dryad.b167g').pdf_url)
+
 
 class CrossRefUnitTest(unittest.TestCase):
 
@@ -132,35 +135,35 @@ class CrossRefUnitTest(unittest.TestCase):
     def test_parse_crossref_date_incomplete(self):
         self.assertEqual(parse_crossref_date(None), None)
         self.assertEqual(
-                parse_crossref_date({'date-parts': [[2015, 07, 06]]}),
-                datetime.date(year=2015, month=07, day=06))
+            parse_crossref_date({'date-parts': [[2015, 07, 06]]}),
+            datetime.date(year=2015, month=07, day=06))
         self.assertEqual(
-                parse_crossref_date({'date-parts': [[2015, 07]]}),
-                datetime.date(year=2015, month=07, day=01))
+            parse_crossref_date({'date-parts': [[2015, 07]]}),
+            datetime.date(year=2015, month=07, day=01))
         self.assertEqual(
-                parse_crossref_date({'date-parts': [[2015]]}),
-                datetime.date(year=2015, month=01, day=01))
+            parse_crossref_date({'date-parts': [[2015]]}),
+            datetime.date(year=2015, month=01, day=01))
 
     def test_parse_crossref_date_raw(self):
         self.assertEqual(
-                parse_crossref_date({'raw': '2015'}),
-                datetime.date(year=2015, month=01, day=01))
+            parse_crossref_date({'raw': '2015'}),
+            datetime.date(year=2015, month=01, day=01))
         self.assertEqual(
-                parse_crossref_date({'raw': '2015-07'}),
-                datetime.date(year=2015, month=07, day=01))
+            parse_crossref_date({'raw': '2015-07'}),
+            datetime.date(year=2015, month=07, day=01))
         self.assertEqual(
-                parse_crossref_date({'raw': '2015-07-06'}),
-                datetime.date(year=2015, month=07, day=06))
+            parse_crossref_date({'raw': '2015-07-06'}),
+            datetime.date(year=2015, month=07, day=06))
 
     def test_get_publication_date(self):
         self.assertEqual(
-                get_publication_date(
-                    fetch_metadata_by_DOI('10.5281/zenodo.18898')),
-                datetime.date(year=2015, month=01, day=01))
+            get_publication_date(
+                fetch_metadata_by_DOI('10.5281/zenodo.18898')),
+            datetime.date(year=2015, month=01, day=01))
         self.assertEqual(
-                get_publication_date(
-                    fetch_metadata_by_DOI('10.5380/dp.v1i1.1919')),
-                datetime.date(year=2005, month=03, day=18))
+            get_publication_date(
+                fetch_metadata_by_DOI('10.5380/dp.v1i1.1919')),
+            datetime.date(year=2005, month=03, day=18))
 
     def test_batch_queries(self):
         dois = [
@@ -203,23 +206,23 @@ class CrossRefUnitTest(unittest.TestCase):
         dois = [
             '10.1016/0169-5983(88)90079-2',  # CrossRef DOI
             '10.5281/zenodo.12826',  # DataCite DOI
-            ]
+        ]
         results = fetch_dois_by_batch(dois)
         self.assertEqual([item['DOI'] for item in results], dois)
 
     def test_convert_to_name_pair(self):
         self.assertEqual(
-                convert_to_name_pair({'family': 'Farge', 'given': 'Marie'}),
-                ('Marie', 'Farge'))
+            convert_to_name_pair({'family': 'Farge', 'given': 'Marie'}),
+            ('Marie', 'Farge'))
         self.assertEqual(
-                convert_to_name_pair({'literal': 'Marie Farge'}),
-                ('Marie', 'Farge'))
+            convert_to_name_pair({'literal': 'Marie Farge'}),
+            ('Marie', 'Farge'))
         self.assertEqual(
-                convert_to_name_pair({'literal': 'Farge, Marie'}),
-                ('Marie', 'Farge'))
+            convert_to_name_pair({'literal': 'Farge, Marie'}),
+            ('Marie', 'Farge'))
         self.assertEqual(
-                convert_to_name_pair({'family': 'Arvind'}),
-                ('', 'Arvind'))
+            convert_to_name_pair({'family': 'Arvind'}),
+            ('', 'Arvind'))
 
     def test_is_oa_license(self):
         # Creative Commons licenses

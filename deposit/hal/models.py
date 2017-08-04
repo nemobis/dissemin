@@ -9,9 +9,7 @@ from deposit.models import DepositPreferences
 
 class HALDepositPreferences(DepositPreferences):
     on_behalf_of = models.CharField(max_length=128,
-                null=True,
-                blank=True,
-                verbose_name=__('HAL username'),
-                help_text=__('If set, deposits will be associated to this HAL account.'))
-
-
+                                    null=True,
+                                    blank=True,
+                                    verbose_name=__('HAL username'),
+                                    help_text=__('If set, deposits will be associated to this HAL account.'))

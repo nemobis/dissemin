@@ -51,20 +51,20 @@ from publishers.models import OA_STATUS_CHOICES
 from publishers.models import OA_STATUS_PREFERENCE
 
 PAPER_TYPE_CHOICES = [
-   ('journal-article', _('Journal article')),
-   ('proceedings-article', _('Proceedings article')),
-   ('book-chapter', _('Book chapter')),
-   ('book', _('Book')),
-   ('journal-issue', _('Journal issue')),
-   ('proceedings', _('Proceedings')),
-   ('reference-entry', _('Entry')),
-   ('poster', _('Poster')),
-   ('report', _('Report')),
-   ('thesis', _('Thesis')),
-   ('dataset', _('Dataset')),
-   ('preprint', _('Preprint')),
-   ('other', _('Other document')),
-   ]
+    ('journal-article', _('Journal article')),
+    ('proceedings-article', _('Proceedings article')),
+    ('book-chapter', _('Book chapter')),
+    ('book', _('Book')),
+    ('journal-issue', _('Journal issue')),
+    ('proceedings', _('Proceedings')),
+    ('reference-entry', _('Entry')),
+    ('poster', _('Poster')),
+    ('report', _('Report')),
+    ('thesis', _('Thesis')),
+    ('dataset', _('Dataset')),
+    ('preprint', _('Preprint')),
+    ('other', _('Other document')),
+]
 
 PAPER_TYPE_PREFERENCE = [x for (x, y) in PAPER_TYPE_CHOICES]
 
@@ -93,17 +93,17 @@ class BareObject(object):
             if not hasattr(self, f):
                 self.__dict__[f] = None
         for f in self._bare_foreign_key_fields:
-            if f+'_id' not in self.__dict__:
-                self.__dict__[f+'_id'] = None
+            if f + '_id' not in self.__dict__:
+                self.__dict__[f + '_id'] = None
         for k, v in kwargs.items():
             if k in self._bare_fields:
                 self.__dict__[k] = v
             elif k in self._bare_foreign_key_fields:
                 self.__dict__[k] = v
                 if hasattr(v, 'id'):
-                    self.__dict__[k+'_id'] = v.id
+                    self.__dict__[k + '_id'] = v.id
                 else:
-                    self.__dict__[k+'_id'] = None
+                    self.__dict__[k + '_id'] = None
 
     @classmethod
     def from_bare(cls, bare_obj):
@@ -531,8 +531,8 @@ class BarePaper(BareObject):
         records = sorted(records, key=(lambda r: -r.priority))
 
         self.pdf_url = None
-        oa_idx = len(OA_STATUS_PREFERENCE)-1
-        type_idx = len(PAPER_TYPE_PREFERENCE)-1
+        oa_idx = len(OA_STATUS_PREFERENCE) - 1
+        type_idx = len(PAPER_TYPE_PREFERENCE) - 1
         source_found = False
 
         if self.doctype in PAPER_TYPE_PREFERENCE:
@@ -599,19 +599,19 @@ class BarePaper(BareObject):
             'records': [r.json() for r in self.oairecords],
             'pdf_url': self.pdf_url,
             'classification': self.oa_status,
-            })
+        })
 
     def google_scholar_link(self):
         """
         Link to search for the paper in Google Scholar
         """
-        return 'http://scholar.google.com/scholar?'+urlencode({'q': remove_diacritics(self.title)})
+        return 'http://scholar.google.com/scholar?' + urlencode({'q': remove_diacritics(self.title)})
 
     def core_link(self):
         """
         Link to search for the paper in CORE
         """
-        return 'http://core.ac.uk/search/'+quote(remove_diacritics(self.title))
+        return 'http://core.ac.uk/search/' + quote(remove_diacritics(self.title))
 
     def is_orphan(self):
         """
@@ -687,9 +687,9 @@ class BareAuthor(BareObject):
                 NameVariant = apps.get_app_config(
                     'papers').get_model('NameVariant')
                 NameVariant.objects.get_or_create(
-                        researcher=r,
-                        name=self.name,
-                        defaults={'confidence': default_confidence})
+                    researcher=r,
+                    name=self.name,
+                    defaults={'confidence': default_confidence})
             except ObjectDoesNotExist:
                 pass
 
@@ -710,7 +710,7 @@ class BareAuthor(BareObject):
             'orcid': self.orcid,
             'affiliation': self.affiliation,
             'researcher_id': self.researcher_id,
-            }
+        }
 
     @classmethod
     def deserialize(cls, rep):
@@ -723,7 +723,7 @@ class BareAuthor(BareObject):
             orcid=rep.get('orcid'),
             name=name,
             researcher_id=rep.get('researcher_id'),
-            )
+        )
         return inst
 
     def json(self):
@@ -736,10 +736,10 @@ class BareAuthor(BareObject):
         if not orcid_id and self.affiliation:
             affiliation = self.affiliation
         return remove_nones({
-                'name': self.name.json(),
-                'affiliation': affiliation,
-                'orcid': orcid_id,
-                })
+            'name': self.name.json(),
+            'affiliation': affiliation,
+            'orcid': orcid_id,
+        })
 
 
 class BareName(BareObject):
@@ -778,7 +778,7 @@ class BareName(BareObject):
         instance = cls()
         instance.first = sanitize_html(first[:MAX_NAME_LENGTH].strip())
         instance.last = sanitize_html(last[:MAX_NAME_LENGTH].strip())
-        instance.full = iunaccent(instance.first+' '+instance.last)
+        instance.full = iunaccent(instance.first + ' ' + instance.last)
         return instance
 
     def __unicode__(self):
@@ -804,7 +804,7 @@ class BareName(BareObject):
             'first': self.first,
             'last': self.last,
             'full': self.full,
-            }
+        }
 
     @property
     def pair(self):
@@ -819,7 +819,7 @@ class BareName(BareObject):
             first=rep['first'],
             last=rep['last'],
             full=rep['full'],
-            )
+        )
         return inst
 
     def json(self):
@@ -827,9 +827,9 @@ class BareName(BareObject):
         Returns a JSON representation of the name (for external APIs)
         """
         return {
-                'first': self.first,
-                'last': self.last,
-               }
+            'first': self.first,
+            'last': self.last,
+        }
 
     def __repr__(self):
         return "<BareName: %s, %s>" % (unicode(self.first),
@@ -884,7 +884,7 @@ class BareOaiRecord(BareObject):
             return 'OA'
         elif self.publisher:
             if self.publisher.oa_status == 'OA' and self.doi:
-                self.pdf_url = 'https://doi.org/'+self.doi
+                self.pdf_url = 'https://doi.org/' + self.doi
             return self.publisher.oa_status
         else:
             return 'UNK'
@@ -958,20 +958,20 @@ class BareOaiRecord(BareObject):
         if self.journal:
             result['issn'] = self.journal.issn
         result.update({
-                'source': self.source.identifier,
-                'identifier': self.identifier,
-                'splash_url': self.splash_url,
-                'pdf_url': self.pdf_url,
-                'doi': self.doi,
-                'abstract': self.description,
-                'keywords': self.keywords,
-                'contributors': self.contributors,
-                'type': self.pubtype,
-                'publisher': self.publisher_name,
-                'journal': self.full_journal_title(),
-                'container': self.container,
-                'issue': self.issue,
-                'volume': self.volume,
-                'pages': self.pages,
-                })
+            'source': self.source.identifier,
+            'identifier': self.identifier,
+            'splash_url': self.splash_url,
+            'pdf_url': self.pdf_url,
+            'doi': self.doi,
+            'abstract': self.description,
+            'keywords': self.keywords,
+            'contributors': self.contributors,
+            'type': self.pubtype,
+            'publisher': self.publisher_name,
+            'journal': self.full_journal_title(),
+            'container': self.container,
+            'issue': self.issue,
+            'volume': self.volume,
+            'pages': self.pages,
+        })
         return remove_nones(result)

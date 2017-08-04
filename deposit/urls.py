@@ -24,16 +24,16 @@ from deposit import views
 from django.conf.urls import url
 
 urlpatterns = [
-        url(r'^deposit_paper/(?P<pk>\d+)/$',
-            views.start_view, name='upload_paper'),
-        url(r'^deposits$',
-            views.list_deposits, name='list_deposits'),
-        url(r'^ajax/submit-deposit-(?P<pk>\d+)$',
-            views.submitDeposit, name='ajax-submitDeposit'),
-        url(r'^ajax/get-metadata-form$',
-            views.get_metadata_form, name='ajax-getMetadataForm'),
-        url(r'^repository-preferences/(?P<pk>\d+)/$',
-            views.edit_repo_preferences, name='edit-repo-preferences'),
-        url(r'^preferences$',
-            views.edit_global_preferences, name='edit-global-preferences'),
+    url(r'^deposit_paper/(?P<pk>\d+)/$',
+        views.start_view, name='upload_paper'),
+    url(r'^deposits$',
+        views.list_deposits, name='list_deposits'),
+    url(r'^ajax/submit-deposit-(?P<pk>\d+)$',
+        views.submitDeposit, name='ajax-submitDeposit'),
+    url(r'^ajax/get-metadata-form$',
+        views.get_metadata_form, name='ajax-getMetadataForm'),
+    url(r'^repository-preferences/(?P<pk>\d+)/$',
+        views.edit_repo_preferences, name='edit-repo-preferences'),
+    url(r'^preferences$',
+        views.edit_global_preferences, name='edit-global-preferences'),
 ]

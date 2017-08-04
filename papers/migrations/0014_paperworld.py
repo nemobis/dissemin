@@ -15,8 +15,10 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='PaperWorld',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('stats', models.ForeignKey(to='statistics.AccessStatistics', null=True)),
+                ('id', models.AutoField(verbose_name='ID',
+                                        serialize=False, auto_created=True, primary_key=True)),
+                ('stats', models.ForeignKey(
+                    to='statistics.AccessStatistics', null=True)),
             ],
             options={
                 'verbose_name': 'Paper World',

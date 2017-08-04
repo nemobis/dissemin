@@ -24,6 +24,7 @@ import re
 from papers.doi import to_doi
 from backend.doiprefixes import free_doi_prefixes
 
+
 class URLExtractor(object):
 
     def __init__(self):
@@ -99,8 +100,10 @@ class OpenAireExtractor(RegexExtractor):
 
 
 pmc_id_re = re.compile(r'ftpubmed:oai:pubmedcentral\.nih\.gov:([0-9]*)')
-pmc_url_re = re.compile(r'https?://www\.ncbi\.nlm\.nih\.gov/pmc/articles/PMC\d+')
+pmc_url_re = re.compile(
+    r'https?://www\.ncbi\.nlm\.nih\.gov/pmc/articles/PMC\d+')
 pmid_url_re = re.compile(r'https?://www\.ncbi\.nlm\.nih\.gov/pubmed/\d+')
+
 
 class BaseExtractor(RegexExtractor):
 
@@ -115,7 +118,7 @@ class BaseExtractor(RegexExtractor):
         pmc_match = pmc_id_re.match(self.header.identifier())
         if pmc_match:
             pmc_url = None
-            for u in self.metadata.get('identifier',[]):
+            for u in self.metadata.get('identifier', []):
                 # rationale : PMC urls are prioritary
                 # but PMID urls can be used when no PMC url is provided
                 # (because we know they link to PMC eventually, from the
@@ -136,33 +139,34 @@ class BaseExtractor(RegexExtractor):
 
         return urls
 
+
 arxivExtractor = RegexExtractor([
     ('identifier', re.compile(r'(http://arxiv.org/abs/[^ ]*)$'),
         'splash', r'\1'),
     ('identifier', re.compile(r'http://arxiv.org/abs/([^ ]*)$'),
         'pdf', r'http://arxiv.org/pdf/\1')
-    ])
+])
 
 halExtractor = RegexExtractor([
     ('identifier', re.compile(r'(https?://[a-z\-0-9.]*/[a-z0-9\-]*)$'),
         'splash', r'\1'),
     ('identifier', re.compile(r'(https?://[a-z\-0-9.]*/[a-z0-9\-]*/document)$'),
         'pdf', r'\1'),
-    ])
+])
 
 cairnExtractor = CairnExtractor([
     ('identifier', re.compile(r'(http://www\.cairn\.info/article\.php\?ID_ARTICLE=[^ ]*)$'),
         'splash', r'\1'),
     ('identifier', re.compile(r'(http://www\.cairn\.info/)article(\.php\?ID_ARTICLE=[^ ]*)$'),
         'pdf', r'\1load_pdf\2'),
-    ])
+])
 
 pmcExtractor = RegexExtractor([
     ('identifier', re.compile(r'(https?://www\.ncbi\.nlm\.nih\.gov/pubmed/[0-9]+)$'),
         'splash', r'\1'),
     ('identifier', re.compile(r'https?://www\.ncbi\.nlm\.nih\.gov/pubmed/([0-9]+)$'),
         'pdf', r'http://www.ncbi.nlm.nih.gov/pmc/articles/pmid/\1')
-    ])
+])
 
 doajExtractor = RegexExtractor([
     ('relation', re.compile(r'(https?://[^ ]*)'),
@@ -171,51 +175,51 @@ doajExtractor = RegexExtractor([
         'splash', r'\1'),
     ('identifier', re.compile(r'(https?://doaj\.org/article/[^ ]*)'),
         'splash', r'\1'),
-    ])
+])
 
 perseeExtractor = RegexExtractor([
     ('identifier', re.compile(r'(http://www\.persee\.fr/web/revues/home/[^ ]*)'),
         'splash', r'\1'),
     ('identifier', re.compile(r'(http://www\.persee\.fr/web/revues/home/[^ ]*)'),
         'pdf', r'\1'),
-    ])
+])
 
 numdamExtractor = RegexExtractor([
     ('identifier', re.compile(r'(http://www\.numdam\.org/item\?id=[^ ]*)'),
         'splash', r'\1'),
     ('identifier', re.compile(r'http://www\.numdam\.org/item\?id=([^ ]*)'),
         'pdf', r'http://archive.numdam.org/article/\1.pdf'),
-    ])
+])
 
 zenodoExtractor = OpenAireExtractor([
     ('identifier', re.compile(r'(https?://zenodo.org/record/[0-9]*)'),
         'splash', r'\1'),
-    ])
+])
 
 researchgateExtractor = RegexExtractor([
     ('source', re.compile(r'(https?://[^ ]*)'),
         'splash', r'\1'),
     ('identifier', re.compile(r'(https?://[^ ]*\.pdf)'),
         'pdf', r'\1'),
-        ])
+])
 
 baseExtractor = BaseExtractor([
     ('identifier', re.compile(r'(https?://.*)'), 'splash', r'\1'),
     ('identifier', re.compile(r'(https?://.*\.pdf)'), 'pdf', r'\1'),
     ('link', re.compile(r'(https?://.*)'), 'splash', r'\1'),
     ('link', re.compile(r'(https?://.*\.pdf)'), 'pdf', r'\1'),
-    ])
+])
 
 
 REGISTERED_OAI_EXTRACTORS = {
-        'arxiv': arxivExtractor,
-        'hal': halExtractor,
-        'cairn': cairnExtractor,
-        'pmc': pmcExtractor,
-        'doaj': doajExtractor,
-        'persee': perseeExtractor,
-        'numdam': numdamExtractor,
-        'zenodo': zenodoExtractor,
-        'base': baseExtractor,
-        'researchgate': researchgateExtractor,
-        }
+    'arxiv': arxivExtractor,
+    'hal': halExtractor,
+    'cairn': cairnExtractor,
+    'pmc': pmcExtractor,
+    'doaj': doajExtractor,
+    'persee': perseeExtractor,
+    'numdam': numdamExtractor,
+    'zenodo': zenodoExtractor,
+    'base': baseExtractor,
+    'researchgate': researchgateExtractor,
+}

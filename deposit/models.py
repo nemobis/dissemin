@@ -35,17 +35,19 @@ from papers.models import UPLOAD_TYPE_CHOICES
 from upload.models import UploadedPDF
 
 DEPOSIT_STATUS_CHOICES = [
-   ('failed', _('Failed')), # we failed to deposit the paper
-   ('faked', _('Faked')), # the deposit was faked (for tests)
-   ('pending', _('Pending publication')), # the deposit has been
+    ('failed', _('Failed')),  # we failed to deposit the paper
+    ('faked', _('Faked')),  # the deposit was faked (for tests)
+    ('pending', _('Pending publication')),  # the deposit has been
     # submitted but is not publicly visible yet
-   ('published', _('Published')), # the deposit is visible on the repo
-   ('refused', _('Refused by the repository')),
-   ('deleted', _('Deleted')), # deleted by the repository
-   ]
+    ('published', _('Published')),  # the deposit is visible on the repo
+    ('refused', _('Refused by the repository')),
+    ('deleted', _('Deleted')),  # deleted by the repository
+]
+
 
 class RepositoryManager(CachingManager):
     pass
+
 
 class Repository(models.Model, CachingMixin):
     """
@@ -102,7 +104,7 @@ class Repository(models.Model, CachingMixin):
         """
         cls = protocol_registry.get(self.protocol)
         if cls is None:
-            print "Warning: protocol not found: "+unicode(self.protocol)
+            print "Warning: protocol not found: " + unicode(self.protocol)
             return
         return cls(self)
 
@@ -150,8 +152,8 @@ class DepositRecord(models.Model):
     identifier = models.CharField(max_length=512, null=True, blank=True)
     oairecord = models.ForeignKey(OaiRecord, null=True, blank=True)
     date = models.DateTimeField(auto_now=True)  # deposit date
-    upload_type = models.CharField(max_length=64,choices=UPLOAD_TYPE_CHOICES)
-    status = models.CharField(max_length=64,choices=DEPOSIT_STATUS_CHOICES)
+    upload_type = models.CharField(max_length=64, choices=UPLOAD_TYPE_CHOICES)
+    status = models.CharField(max_length=64, choices=DEPOSIT_STATUS_CHOICES)
     additional_info = JSONField(null=True, blank=True)
 
     file = models.ForeignKey(UploadedPDF)
@@ -202,10 +204,10 @@ class DepositPreferences(models.Model):
         """
         raise NotImplementedError()
 
-
     def __repr__(self):
-        return '<DepositPreferences, user %s, repo %s>' %(
-                    unicode(self.user), unicode(self.repository))
+        return '<DepositPreferences, user %s, repo %s>' % (
+            unicode(self.user), unicode(self.repository))
+
 
 class UserPreferences(models.Model):
     """
@@ -215,18 +217,18 @@ class UserPreferences(models.Model):
     user = models.OneToOneField(User)
     # Email address
     email = models.EmailField(max_length=512, null=True, blank=True,
-       help_text=_(
-        'We will use this email address to notify you when your deposits are accepted.'
-    ))
+                              help_text=_(
+                                  'We will use this email address to notify you when your deposits are accepted.'
+                              ))
     # The preferred repository, set by the user
     preferred_repository = models.ForeignKey(Repository,
-        null=True, blank=True,
-        related_name='preferred_by',
-        help_text=_('This repository will be used by default for your deposits.'))
+                                             null=True, blank=True,
+                                             related_name='preferred_by',
+                                             help_text=_('This repository will be used by default for your deposits.'))
     # The last repository used by this user
     last_repository = models.ForeignKey(Repository,
-        null=True, blank=True,
-        related_name='last_used_by')
+                                        null=True, blank=True,
+                                        related_name='last_used_by')
 
     @classmethod
     def get_by_user(cls, user):
@@ -235,4 +237,3 @@ class UserPreferences(models.Model):
         """
         userprefs, _ = cls.objects.get_or_create(user=user)
         return userprefs
-
